@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const { Category } = require('../models/user')
+const { Category } = require('../models/category')
 
 router.get(`/`, async(req, res) => {
   const categoryList = await Category.find()
@@ -12,6 +12,20 @@ router.get(`/`, async(req, res) => {
     })
     res.send(categoryList)
   }
+})
+
+router.post(`/`, async(req, res) => {
+  let category = new Category({
+    name: req.body.name,
+    icon: req.body.icon,
+    color: req.body.color
+  })
+  category = await category.save()
+
+  if (!category) {
+    return res.status(404).send('Category cannot be created')
+  }
+  res.send(category)
 })
 
 module.exports = router
