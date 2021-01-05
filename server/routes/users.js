@@ -1,3 +1,10 @@
+/**
+ * users.js
+ * @fileoverview Users routes file in order to perform CRUD actions for users endpoints
+ * @param {Obj} user is the authenticated user making the request
+ * @author Jacques Nalletamby
+ */
+
 const express = require('express')
 const router = express.Router()
 

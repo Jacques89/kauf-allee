@@ -1,3 +1,9 @@
+/**
+ * orders.js
+ * @fileoverview Orders routes file in order to perform CRUD actions for orders endpoints
+ * @author Jacques Nalletamby
+ */
+
 const express = require('express')
 const router = express.Router()
 

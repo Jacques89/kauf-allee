@@ -1,3 +1,10 @@
+/**
+ * products.js
+ * @fileoverview Products routes file in order to perform CRUD actions for products endpoints
+ * @param {Obj} product is item displayed in the shop
+ * @author Jacques Nalletamby
+ */
+
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
@@ -5,6 +12,12 @@ const mongoose = require('mongoose')
 const { Category } = require('../models/category')
 const { Product } = require('../models/product')
 
+
+// GET REQUESTS
+/**
+ * @param req
+ * @param res
+ */
 router.get(`/`, async (req, res) => {
   const productList = await Product.find().populate('category')
 
@@ -16,6 +29,11 @@ router.get(`/`, async (req, res) => {
   res.send(productList)
 })
 
+/**
+ * @param {String} id is the String value of the productID
+ * @param req
+ * @param res
+ */
 router.get(`/:id`, async (req, res) => {
   const product = await Product.findById(req.params.id).populate('category')
 
@@ -27,6 +45,49 @@ router.get(`/:id`, async (req, res) => {
   res.send(product)
 })
 
+/**
+ * @param req
+ * @param res
+ * @param count is the quantity of documents retrieved from the request.
+ */
+router.get(`/get/count`, async(req, res) => {
+  const productCount = await Product.countDocuments(count => count)
+
+  if (!productCount) {
+    res.status(500).json({
+      success: false
+    })
+  }
+  res.send({
+    productCount: productCount
+  })
+})
+/**  
+* @param req
+* @param res
+*  @param count is the quantity of documents retrieved from the request.
+*/
+router.get(`/get/featured/:count`, async(req, res) => {
+  const count = req.params.count ? req.params.count : 0
+  const products = await Product.find({
+    isFeatured: true
+  })
+  .limit(+count)
+
+  if (!products) {
+    res.status(500).json({
+      success: false
+    })
+  }
+  res.send(products)
+})
+
+// POST REQUESTS
+/**
+ * @param body is the request body parsed by bodyParser middleware
+ * @param req
+ * @param res
+ */
 router.post(`/`, async(req, res) => {
   const category = await Category.findById(req.body.category)
 
@@ -55,11 +116,15 @@ router.post(`/`, async(req, res) => {
   res.send(product)
 })
 
+// PUT REQUESTS
+/**
+ * @param {String} id is the string value of the ProductID
+ */
 router.put(`/:id`, async(req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
     res.status(400).send('Invalid Product Id')
   }
-  
+
   const category = await Category.findById(req.body.category)
 
   if (!category) {
@@ -88,6 +153,13 @@ router.put(`/:id`, async(req, res) => {
   }
   res.send(product)
 })
+
+/**
+ * DELETE REQUESTS
+ * @param {number} id is the objectId of the product
+ * @param req 
+ * @param res
+ */
 
 router.delete(`/:id`, (req, res) => {
   Product.findByIdAndRemove(req.params.id)

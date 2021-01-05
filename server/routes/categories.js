@@ -1,3 +1,9 @@
+/**
+ * categories.js
+ * @fileoverview catagories routes file in order to perform CRUD actions for catagories endpoints
+ * @author Jacques Nalletamby
+ */
+
 const express = require('express')
 const router = express.Router()
 
