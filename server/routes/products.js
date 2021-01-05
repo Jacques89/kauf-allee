@@ -19,7 +19,13 @@ const { Product } = require('../models/product')
  * @param res
  */
 router.get(`/`, async (req, res) => {
-  const productList = await Product.find().populate('category')
+  let filter = {}
+
+  if (req.query.catagories) {
+    filter = {category: req.query.catagories.split(',')}
+  }
+
+  const productList = await Product.find(filter).populate('category')
 
   if (!productList) {
     res.status(500).json({
@@ -65,7 +71,7 @@ router.get(`/get/count`, async(req, res) => {
 /**  
 * @param req
 * @param res
-*  @param count is the quantity of documents retrieved from the request.
+* @param count is the quantity of documents retrieved from the request.
 */
 router.get(`/get/featured/:count`, async(req, res) => {
   const count = req.params.count ? req.params.count : 0
