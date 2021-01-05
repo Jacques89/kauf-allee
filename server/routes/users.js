@@ -21,4 +21,25 @@ router.get(`/`, async(req, res) => {
   }
 })
 
+router.post(`/`, async(req, res) => {
+  let user = new User({
+    name: req.body.name,
+    email: req.body.email,
+    passwordHash: req.body.passwordHash,
+    phone: req.body.phone,
+    isAdmin: req.body.isAdmin,
+    street: req.body.street,
+    apartment: req.body.apartment,
+    postcode: req.body.postcode,
+    city: req.body.city,
+    country: req.body.country,
+  })
+  user = await user.save()
+
+  if (!user) {
+    return res.status(404).send('User cannot be created!')
+  }
+  res.send(user)
+})
+
 module.exports = router
