@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const mongoose = require('mongoose')
 const cors = require('cors')
 
+const jwtAuth = require('./helpers/jwt')
 const Product = require('./models/product')
 require('dotenv/config')
 
@@ -14,6 +15,7 @@ app.options('*', cors)
 // Middleware
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
+app.use(jwtAuth())
 
 // Routes
 const productsRoute = require('./routes/products')
