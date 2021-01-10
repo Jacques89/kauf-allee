@@ -11,15 +11,26 @@ const bcrypt = require('bcryptjs')
 
 const { User } = require('../models/user')
 
-router.get(`/`, async(req, res) => {
-  const userList = await User.find()
+router.get(`/`, async (req, res) =>{
+  const userList = await User.find().select('-passwordHash')
 
   if (!userList) {
     res.status(500).json({
       success: false
     })
-    res.send(userList)
-  }
+  } 
+  res.send(userList)
+})
+
+router.get('/:id', async(req,res)=>{
+  const user = await User.findById(req.params.id).select('-passwordHash')
+
+  if (!user) {
+    res.status(500).json({
+      message: 'The user ID was not found.'
+    })
+  } 
+  res.status(200).send(user)
 })
 
 router.post(`/`, async(req, res) => {
@@ -38,7 +49,7 @@ router.post(`/`, async(req, res) => {
   user = await user.save()
 
   if (!user) {
-    return res.status(404).send('User cannot be created!')
+    return res.status(500).send('User cannot be created!')
   }
   res.send(user)
 })
