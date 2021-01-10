@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 
 const jwtAuth = require('./helpers/jwt')
+const errorHandler = require('./helpers/error-handler')
 const Product = require('./models/product')
 require('dotenv/config')
 
@@ -16,6 +17,7 @@ app.options('*', cors)
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
 app.use(jwtAuth())
+app.use(errorHandler)
 
 // Routes
 const productsRoute = require('./routes/products')
