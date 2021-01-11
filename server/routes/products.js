@@ -17,6 +17,7 @@ const { Product } = require('../models/product')
  * @api {get} /products 
  * @apiDescription Get the Product information
  * @apiGroup Products
+ * @apiPermission none
  * @apiSuccess {String} name The Name of the Product
  * @apiSuccess {String} description The Brief description of the product
  * @apiSuccess {String} mainDescription The Main description of the product
@@ -56,6 +57,7 @@ router.get(`/`, async(req, res) => {
  * @apiDescription Get the Product Id
  * @apiParam {String} id String value of the productID
  * @apiGroup Products
+ * @apiPermission none
  * @apiSuccess {String} name Name of the Product
  * @apiSuccess {String} description Brief description of the product
  * @apiSuccess {String} mainDescription Main description of the product
@@ -83,6 +85,7 @@ router.get(`/:id`, async(req, res) => {
  * @apiDescription Get the product quantity in the database
  * @apiParam {Number} count is the quantity of products retrieved from the request.
  * @apiGroup Products
+ * @apiPermission none
  * @apiSuccess {Number} productCount The quantity of overall products
  * @apiError ProductCountNotFound (500) The product count could not be retrieved
 */
@@ -104,6 +107,7 @@ router.get(`/get/count`, async(req, res) => {
  * @apiDescription Get the featured quantity in the database
  * @apiParam {Number} Count is the quantity of featured products retrieved from the request.
  * @apiGroup Products
+ * @apiPermission none
  * @apiSuccess {Number} productCount The quantity of overall products
  * @apiError ProductCountNotFound (500) The products could not be retrieved
 */
@@ -129,6 +133,7 @@ router.get(`/get/featured/:count`, async(req, res) => {
  * @apiDescription Create a new product
  * @apiParam {Number} count is the quantity of products retrieved from the request.
  * @apiGroup Products
+ * @apiPermission admin
  * @apiSuccess {String} name The Name of the Product
  * @apiSuccess {String} description The Brief description of the product
  * @apiSuccess {String} mainDescription The Main description of the product
@@ -181,6 +186,7 @@ router.post(`/`, async(req, res) => {
  * @apiDescription Update an existing product
  * @apiParam {Number} count is the quantity of products retrieved from the request.
  * @apiGroup Products
+ * @apiPermission admin
  * @apiSuccess {String} name The Name of the Product
  * @apiSuccess {String} description The Brief description of the product
  * @apiSuccess {String} mainDescription The Main description of the product
@@ -239,6 +245,7 @@ router.put(`/:id`, async(req, res) => {
  * @apiDescription Delete an existing product
  * @apiParam {String} id The id of the product
  * @apiGroup Products
+ * @apiPermission admin
  */
 
 router.delete(`/:id`, (req, res) => {
