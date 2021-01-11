@@ -36,7 +36,8 @@ app.use(`${api}/orders`, ordersRoutes)
 mongoose
 .connect(process.env.DATABASE, { 
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 }
 )
 .then(res => {

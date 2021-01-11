@@ -1,7 +1,7 @@
 /**
  * products.js
  * @fileoverview Products routes file in order to perform CRUD actions for products endpoints
- * @param {Obj} product is item displayed in the shop
+ * @param {Obj} Product is item displayed in the shop
  * @author Jacques Nalletamby
 */
 const express = require('express')
@@ -11,10 +11,11 @@ const mongoose = require('mongoose')
 const { Category } = require('../models/category')
 const { Product } = require('../models/product')
 
+// GET REQUESTS
 /**
  * @apiName GetProducts
  * @api {get} /products 
- * @apDescription Get the product Information
+ * @apiDescription Get the Product information
  * @apiGroup Products
  * @apiSuccess {String} name The Name of the Product
  * @apiSuccess {String} description The Brief description of the product
@@ -52,6 +53,7 @@ router.get(`/`, async (req, res) => {
 /**
  * @apiName GetProductID 
  * @api {get} /products/:id 
+ * @apiDescription Get the Product Id
  * @apiParam {String} id String value of the productID
  * @apiGroup Products
  * @apiSuccess {String} name Name of the Product
@@ -77,7 +79,8 @@ router.get(`/:id`, async (req, res) => {
 
 /**
  * @apiName GetProductCount
- * @api {get} /get/count get the product quantity in the database
+ * @api {get} /get/count 
+ * @apiDescription Get the product quantity in the database
  * @apiParam {Number} count is the quantity of products retrieved from the request.
  * @apiGroup Products
  * @apiSuccess {Number} productCount The quantity of overall products
@@ -97,8 +100,9 @@ router.get(`/get/count`, async(req, res) => {
 })
 /**
  * @apiName GetFeaturedProduct
- * @api {get} /get/count Get the product quantity in the database
- * @apiParam {Number} count is the quantity of products retrieved from the request.
+ * @api {get} /get/featured/:count 
+ * @apiDescription Get the featured quantity in the database
+ * @apiParam {Number} Count is the quantity of featured products retrieved from the request.
  * @apiGroup Products
  * @apiSuccess {Number} productCount The quantity of overall products
  * @apiError ProductCountNotFound (500) The products could not be retrieved
@@ -121,10 +125,25 @@ router.get(`/get/featured/:count`, async(req, res) => {
 // POST REQUESTS
 /**
  * @apiName PostProduct
- * @api {post} /products Create a new product
+ * @api {post} /products 
+ * @apiDescription Create a new product
  * @apiParam {Number} count is the quantity of products retrieved from the request.
  * @apiGroup Products
- * @apiSuccess {Number} productCount The quantity of overall products
+ * @apiSuccess {String} name The Name of the Product
+ * @apiSuccess {String} description The Brief description of the product
+ * @apiSuccess {String} mainDescription The Main description of the product
+ * @apiSuccess {String} image The Landing image of the product
+ * @apiSuccess {String[]} images The Images of the product
+ * @apiSuccess {String} brand The Brand name of the product
+ * @apiSuccess {Number} price The Price of the product
+ * @apiSuccess {Obj} category The Category of the product
+ * @apiSuccess {Number} stockCount The Stock Count of the product
+ * @apiSuccess {Number} rating The Rating of the product
+ * @apiSuccess {Number} numReviews The number of reviews of the product
+ * @apiSuccess {String} id The id of the product
+ * @apiSuccess {Boolean} isFeatured The boolean value if the product is on the landing page 
+ * @apiSuccess {Date} dateCreated The date the product was created
+ * @apiError InvalidCategory (400) The category was not valid
  * @apiError ProductCountNotFound (500) The product could not be created
 */
 router.post(`/`, async(req, res) => {
@@ -157,8 +176,28 @@ router.post(`/`, async(req, res) => {
 
 // PUT REQUESTS
 /**
- * @param {String} id is the string value of the ProductID
- */
+ * @apiName UpdateProduct
+ * @api {put} /products/:id 
+ * @apiDescription Update an existing product
+ * @apiParam {Number} count is the quantity of products retrieved from the request.
+ * @apiGroup Products
+ * @apiSuccess {String} name The Name of the Product
+ * @apiSuccess {String} description The Brief description of the product
+ * @apiSuccess {String} mainDescription The Main description of the product
+ * @apiSuccess {String} image The Landing image of the product
+ * @apiSuccess {String[]} images The Images of the product
+ * @apiSuccess {String} brand The Brand name of the product
+ * @apiSuccess {Number} price The Price of the product
+ * @apiSuccess {Obj} category The Category of the product
+ * @apiSuccess {Number} stockCount The Stock Count of the product
+ * @apiSuccess {Number} rating The Rating of the product
+ * @apiSuccess {Number} numReviews The number of reviews of the product
+ * @apiSuccess {String} id The id of the product
+ * @apiSuccess {Boolean} isFeatured The boolean value if the product is on the landing page 
+ * @apiSuccess {Date} dateCreated The date the product was created
+ * @apiError InvalidProductId (400) The product Id was not valid
+ * @apiError InvalidCategory (400) The category was not valid
+*/
 router.put(`/:id`, async(req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
     res.status(400).send('Invalid Product Id')
@@ -195,9 +234,11 @@ router.put(`/:id`, async(req, res) => {
 
 /**
  * DELETE REQUESTS
- * @param {number} id is the objectId of the product
- * @param req 
- * @param res
+ * @apiName DeleteProduct
+ * @api {delete} /products/:id
+ * @apiDescription Delete an existing product
+ * @apiParam {String} id The id of the product
+ * @apiGroup Products
  */
 
 router.delete(`/:id`, (req, res) => {
