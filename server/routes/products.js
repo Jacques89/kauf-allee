@@ -3,7 +3,7 @@
  * @fileoverview Products routes file in order to perform CRUD actions for products endpoints
  * @param {Obj} product is item displayed in the shop
  * @author Jacques Nalletamby
- */
+*/
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
@@ -12,10 +12,26 @@ const { Category } = require('../models/category')
 const { Product } = require('../models/product')
 
 /**
- * @api get /products Get Products information 
  * @apiName GetProducts
+ * @api {get} /products 
+ * @apDescription Get the product Information
  * @apiGroup Products
- */
+ * @apiSuccess {String} name The Name of the Product
+ * @apiSuccess {String} description The Brief description of the product
+ * @apiSuccess {String} mainDescription The Main description of the product
+ * @apiSuccess {String} image The Landing image of the product
+ * @apiSuccess {String[]} images The Images of the product
+ * @apiSuccess {String} brand The Brand name of the product
+ * @apiSuccess {Number} price The Price of the product
+ * @apiSuccess {Obj} category The Category of the product
+ * @apiSuccess {Number} stockCount The Stock Count of the product
+ * @apiSuccess {Number} rating The Rating of the product
+ * @apiSuccess {Number} numReviews The number of reviews of the product
+ * @apiSuccess {String} id The id of the product
+ * @apiSuccess {Boolean} isFeatured The boolean value if the product is on the landing page 
+ * @apiSuccess {Date} dateCreated The date the product was created
+ * @apiError Productsnotfound (500) The products could not be retrieved
+*/
 router.get(`/`, async (req, res) => {
   let filter = {}
 
@@ -34,11 +50,20 @@ router.get(`/`, async (req, res) => {
 })
 
 /**
- * 
- * @param {String} id is the String value of the productID
- * @param req
- * @param res
- */
+ * @apiName GetProductID 
+ * @api {get} /products/:id 
+ * @apiParam {String} id String value of the productID
+ * @apiGroup Products
+ * @apiSuccess {String} name Name of the Product
+ * @apiSuccess {String} description Brief description of the product
+ * @apiSuccess {String} mainDescription Main description of the product
+ * @apiSuccess {String} image Landing image of the product
+ * @apiSuccess {String[]} images Images of the product
+ * @apiSuccess {String} brand Brand name of the product
+ * @apiSuccess {Number} price Price of the product
+ * @apiSuccess {ObjId} category Category of the product
+ * @apiError ProductNotFound (500) The product could not be found
+*/
 router.get(`/:id`, async (req, res) => {
   const product = await Product.findById(req.params.id).populate('category')
 
@@ -51,10 +76,13 @@ router.get(`/:id`, async (req, res) => {
 })
 
 /**
- * @param req
- * @param res
- * @param count is the quantity of documents retrieved from the request.
- */
+ * @apiName GetProductCount
+ * @api {get} /get/count get the product quantity in the database
+ * @apiParam {Number} count is the quantity of products retrieved from the request.
+ * @apiGroup Products
+ * @apiSuccess {Number} productCount The quantity of overall products
+ * @apiError ProductCountNotFound (500) The product count could not be retrieved
+*/
 router.get(`/get/count`, async(req, res) => {
   const productCount = await Product.countDocuments(count => count)
 
@@ -68,10 +96,12 @@ router.get(`/get/count`, async(req, res) => {
   })
 })
 /**
- *   
- * @param req
- * @param res
- * @param count is the quantity of documents retrieved from the request.
+ * @apiName GetFeaturedProduct
+ * @api {get} /get/count Get the product quantity in the database
+ * @apiParam {Number} count is the quantity of products retrieved from the request.
+ * @apiGroup Products
+ * @apiSuccess {Number} productCount The quantity of overall products
+ * @apiError ProductCountNotFound (500) The products could not be retrieved
 */
 router.get(`/get/featured/:count`, async(req, res) => {
   const count = req.params.count ? req.params.count : 0
@@ -90,10 +120,13 @@ router.get(`/get/featured/:count`, async(req, res) => {
 
 // POST REQUESTS
 /**
- * @param body is the request body parsed by bodyParser middleware
- * @param req
- * @param res
- */
+ * @apiName PostProduct
+ * @api {post} /products Create a new product
+ * @apiParam {Number} count is the quantity of products retrieved from the request.
+ * @apiGroup Products
+ * @apiSuccess {Number} productCount The quantity of overall products
+ * @apiError ProductCountNotFound (500) The product could not be created
+*/
 router.post(`/`, async(req, res) => {
   const category = await Category.findById(req.body.category)
 

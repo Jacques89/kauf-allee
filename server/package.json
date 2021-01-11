@@ -4,7 +4,7 @@
   "description": "shop backend",
   "main": "app.js",
   "apidoc": {
-    "title": "Custom apiDoc browser title",
+    "title": "kauf_allee_server_docs",
     "url": "https://api.github.com/v1"
   },
   "scripts": {
