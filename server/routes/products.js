@@ -30,7 +30,7 @@ const { Product } = require('../models/product')
  * @apiSuccess {String} id The id of the product
  * @apiSuccess {Boolean} isFeatured The boolean value if the product is on the landing page 
  * @apiSuccess {Date} dateCreated The date the product was created
- * @apiError Productsnotfound (500) The products could not be retrieved
+ * @apiError ProductsNotFound (500) The products could not be retrieved
 */
 router.get(`/`, async (req, res) => {
   let filter = {}
@@ -134,7 +134,7 @@ router.post(`/`, async(req, res) => {
     return res.status(400).send('Invalid Category')
   }
 
-  const product = new Product({
+  let product = new Product({
     name: req.body.name,
     description: req.body.description,
     mainDescription: req.body.mainDescription,
