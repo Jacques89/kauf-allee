@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken')
 
 const { User } = require('../models/user')
 
-router.get(`/`, async (req, res) =>{
+router.get(`/`, async(req, res) =>{
   const userList = await User.find().select('-passwordHash')
 
   if (!userList) {
@@ -23,7 +23,7 @@ router.get(`/`, async (req, res) =>{
   res.send(userList)
 })
 
-router.get('/:id', async(req,res)=>{
+router.get('/:id', async(req, res) => {
   const user = await User.findById(req.params.id).select('-passwordHash')
 
   if (!user) {
@@ -55,7 +55,7 @@ router.post(`/`, async(req, res) => {
   res.send(user)
 })
 
-router.post(`/login`, async (req, res) => {
+router.post(`/login`, async(req, res) => {
   const user = await User.findOne({ email: req.body.email })
   const JWT_TOKEN = process.env.TOKEN
 

@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "shop backend",
   "main": "app.js",
+  "apidoc": {
+    "title": "Custom apiDoc browser title",
+    "url": "https://api.github.com/v1"
+  },
   "scripts": {
     "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"

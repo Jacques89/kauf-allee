@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const jsdocRestApi = require('jsdoc-rest-api')
 
 const jwtAuth = require('./helpers/jwt')
 const errorHandler = require('./helpers/error-handler')
@@ -18,6 +19,11 @@ app.use(bodyParser.json())
 app.use(morgan('tiny'))
 app.use(jwtAuth())
 app.use(errorHandler)
+
+jsdocRestApi.attachExpressAppEndpoints({
+	app,
+	source: "server/api/**/*Controller.js"
+})
 
 // Routes
 const productsRoute = require('./routes/products')

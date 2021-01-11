@@ -4,7 +4,6 @@
  * @param {Obj} product is item displayed in the shop
  * @author Jacques Nalletamby
  */
-
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
@@ -12,11 +11,10 @@ const mongoose = require('mongoose')
 const { Category } = require('../models/category')
 const { Product } = require('../models/product')
 
-
-// GET REQUESTS
 /**
- * @param req
- * @param res
+ * @api get /products Get Products information 
+ * @apiName GetProducts
+ * @apiGroup Products
  */
 router.get(`/`, async (req, res) => {
   let filter = {}
@@ -36,6 +34,7 @@ router.get(`/`, async (req, res) => {
 })
 
 /**
+ * 
  * @param {String} id is the String value of the productID
  * @param req
  * @param res
@@ -68,10 +67,11 @@ router.get(`/get/count`, async(req, res) => {
     productCount: productCount
   })
 })
-/**  
-* @param req
-* @param res
-* @param count is the quantity of documents retrieved from the request.
+/**
+ *   
+ * @param req
+ * @param res
+ * @param count is the quantity of documents retrieved from the request.
 */
 router.get(`/get/featured/:count`, async(req, res) => {
   const count = req.params.count ? req.params.count : 0
