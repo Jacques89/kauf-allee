@@ -33,7 +33,7 @@ const { Product } = require('../models/product')
  * @apiSuccess {Date} dateCreated The date the product was created
  * @apiError ProductsNotFound (500) The products could not be retrieved
 */
-router.get(`/`, async (req, res) => {
+router.get(`/`, async(req, res) => {
   let filter = {}
 
   if (req.query.catagories) {
@@ -66,7 +66,7 @@ router.get(`/`, async (req, res) => {
  * @apiSuccess {ObjId} category Category of the product
  * @apiError ProductNotFound (500) The product could not be found
 */
-router.get(`/:id`, async (req, res) => {
+router.get(`/:id`, async(req, res) => {
   const product = await Product.findById(req.params.id).populate('category')
 
   if (!product) {
@@ -232,8 +232,8 @@ router.put(`/:id`, async(req, res) => {
   res.send(product)
 })
 
+// DELETE REQUESTS
 /**
- * DELETE REQUESTS
  * @apiName DeleteProduct
  * @api {delete} /products/:id
  * @apiDescription Delete an existing product
