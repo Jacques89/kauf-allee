@@ -1,14 +1,27 @@
 /**
  * categories.js
  * @fileoverview catagories routes file in order to perform CRUD actions for catagories endpoints
+ * @param {Obj} Category is the category that products belong to
  * @author Jacques Nalletamby
  */
-
 const express = require('express')
 const router = express.Router()
 
 const { Category } = require('../models/category')
 
+// GET REQUESTS
+/**
+ * @apiName GetCategory
+ * @api {get} /categories
+ * @apiDescription Get the Categories information
+ * @apiGroup Categories 
+ * @apiPermission none
+ * @apiSuccess {String} id The id of the Category
+ * @apiSuccess {String} name The name of the Category
+ * @apiSuccess {String} icon The Icon of the Category
+ * @apiSuccess {String} color The color of the Category
+ * @apiError CategoriesNotFound (500) The Categories could not be retrieved
+ */
 router.get(`/`, async(req, res) => {
   const categoryList = await Category.find()
 
@@ -20,6 +33,19 @@ router.get(`/`, async(req, res) => {
   res.send(categoryList)
 })
 
+/**
+ * @apiName GetCategoryId
+ * @api {get} /categories/:id
+ * @apiDescription Get a specific Category
+ * @apiParam {String} id String value of the Category ID
+ * @apiGroup Categories 
+ * @apiPermission none
+ * @apiSuccess {String} id The id of the Category
+ * @apiSuccess {String} name The name of the Category
+ * @apiSuccess {String} icon The Icon of the Category
+ * @apiSuccess {String} color The color of the Category TODO BETTER DESCRIPTION
+ * @apiError CategoryNotFound (500) The Category could not be retrieved
+ */
 router.get(`/:id`, async(req, res) => {
   const category = await Category.findById(req.params.id)
   if (!category) {
@@ -30,6 +56,19 @@ router.get(`/:id`, async(req, res) => {
   res.status(200).send(category)
 })
 
+// POST REQUESTS
+/**
+ * @apiName PostCategory
+ * @api {post} /categories
+ * @apiDescription Create a new Category
+ * @apiGroup Categories 
+ * @apiPermission Admin
+ * @apiSuccess {String} id The id of the Category
+ * @apiSuccess {String} name The name of the Category
+ * @apiSuccess {String} icon The Icon of the Category
+ * @apiSuccess {String} color The color of the Category TODO BETTER DESCRIPTION
+ * @apiError CategoryNotCreated(404) The Category cannot be created!
+ */
 router.post(`/`, async(req, res) => {
   let category = new Category({
     name: req.body.name,
@@ -44,6 +83,20 @@ router.post(`/`, async(req, res) => {
   res.send(category)
 })
 
+// PUT REQUESTS
+/**
+ * @apiName UpdateCategory
+ * @api {put} /categories/:id
+ * @apiDescription Update an existing Category
+ * @apiParam {String} id String value of the Category ID
+ * @apiGroup Categories 
+ * @apiPermission Admin
+ * @apiSuccess {String} id The id of the Category
+ * @apiSuccess {String} name The name of the Category
+ * @apiSuccess {String} icon The Icon of the Category
+ * @apiSuccess {String} color The color of the Category
+ * @apiError CategoryNotUpdated (404) The Category cannot be updated
+ */
 router.put(`/:id`, async(req, res) => {
   const category = await Category.findByIdAndUpdate(
     req.params.id,
@@ -60,6 +113,16 @@ router.put(`/:id`, async(req, res) => {
   res.send(category)
 })
 
+// DELETE REQUESTS
+/**
+ * @apiName DeleteCategory
+ * @api {delete} /categories/:id
+ * @apiDescription Update an existing Category
+ * @apiParam {String} id String value of the category ID
+ * @apiGroup Categories 
+ * @apiPermission Admin
+ * @apiError CategoryNotUDeleted (404) The Category could not be deleted
+ */
 router.delete(`/:id`, (req, res) => {
   Category.findByIdAndRemove(req.params.id)
   .then(category => {
