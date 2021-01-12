@@ -1,10 +1,9 @@
 /**
  * users.js
  * @fileoverview Users routes file in order to perform CRUD actions for users endpoints
- * @param {Obj} user is the authenticated user making the request
+ * @param {Obj} User is the user making the request
  * @author Jacques Nalletamby
  */
-
 const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
@@ -12,6 +11,25 @@ const jwt = require('jsonwebtoken')
 
 const { User } = require('../models/user')
 
+// GET REQUESTS
+/**
+ * @apiName GetUsers
+ * @api {get} /users
+ * @apiDescription Get the Users information
+ * @apiGroup Users
+ * @apiPermission Admin
+ * @apiSuccess {String} name The Name of the User
+ * @apiSuccess {String} email The email of the User
+ * @apiSuccess {String} phone The phone number of the User
+ * @apiSuccess {Boolean} isAdmin The Admin status of the User
+ * @apiSuccess {String} street The street name of the User
+ * @apiSuccess {String} apartment The apartment number of the User
+ * @apiSuccess {String} postcode The postcode of the User
+ * @apiSuccess {String} city The City of the User
+ * @apiSuccess {String} country The country of the User
+ * @apiSuccess {String} id The Id of the User
+ * @apiError Users Not Found (500) Users could not be found
+ */
 router.get(`/`, async(req, res) =>{
   const userList = await User.find().select('-passwordHash')
 
@@ -23,6 +41,25 @@ router.get(`/`, async(req, res) =>{
   res.send(userList)
 })
 
+/**
+ * @apiName GetUserId
+ * @api {get} /users/:id
+ * @apiDescription Get a specific User
+ * @apiParam {String} id The String value of the User ID
+ * @apiGroup Users
+ * @apiPermission Admin
+ * @apiSuccess {String} name The Name of the User
+ * @apiSuccess {String} email The email of the User
+ * @apiSuccess {String} phone The phone number of the User
+ * @apiSuccess {Boolean} isAdmin The Admin status of the User
+ * @apiSuccess {String} street The street name of the User
+ * @apiSuccess {String} apartment The apartment number of the User
+ * @apiSuccess {String} postcode The postcode of the User
+ * @apiSuccess {String} city The City of the User
+ * @apiSuccess {String} country The country of the User
+ * @apiSuccess {String} id The Id of the User
+ * @apiError UserNotFound (500) User ID was not found
+ */
 router.get('/:id', async(req, res) => {
   const user = await User.findById(req.params.id).select('-passwordHash')
 
@@ -34,6 +71,47 @@ router.get('/:id', async(req, res) => {
   res.status(200).send(user)
 })
 
+/**
+ * @apiName GetUserCount
+ * @api {get} 
+ * @apiDescription Get the number of Users
+ * @apiGroup Users
+ * @apiPermission Admin
+ * @apiSuccess {Number} userCount The number of Users
+ * @apiError NoAccessRight (401) User is not authorized 
+ */
+router.get(`/get/count`, async(req, res) => {
+  const userCount = await User.countDocuments(count => count)
+
+  if (!userCount) {
+    res.status(500).json({
+      success: false
+    })
+  }
+  res.send({
+    userCount: userCount
+  })
+})
+
+// POST REQUESTS
+/**
+ * @apiName PostUser
+ * @api {post} /users
+ * @apiDescription Create a new User
+ * @apiGroup Users
+ * @apiPermission Admin
+ * @apiSuccess {String} name The Name of the User
+ * @apiSuccess {String} email The email of the User
+ * @apiSuccess {String} phone The phone number of the User
+ * @apiSuccess {Boolean} isAdmin The Admin status of the User
+ * @apiSuccess {String} street The street name of the User
+ * @apiSuccess {String} apartment The apartment number of the User
+ * @apiSuccess {String} postcode The postcode of the User
+ * @apiSuccess {String} city The City of the User
+ * @apiSuccess {String} country The country of the User
+ * @apiSuccess {String} id The Id of the User
+ * @apiError UserNotCreated (500) User could not be created
+ */
 router.post(`/`, async(req, res) => {
   let user = new User({
     name: req.body.name,
@@ -55,6 +133,16 @@ router.post(`/`, async(req, res) => {
   res.send(user)
 })
 
+/**
+ * @apiName PostUserLogin
+ * @api {post} /users/login
+ * @apiDescription Login as authenticated User
+ * @apiGroup Users
+ * @apiPermission none
+ * @apiSuccess {String} user The registered email address of the User
+ * @apiSuccess {String} token The authentication token provided to the User
+ * @apiError LoginFailed (400) Login Failed 
+ */
 router.post(`/login`, async(req, res) => {
   const user = await User.findOne({ email: req.body.email })
   const JWT_TOKEN = process.env.TOKEN
@@ -76,9 +164,26 @@ router.post(`/login`, async(req, res) => {
   } else {
     res.status(400).send('Login failed')
   }
-  
 })
 
+/**
+ * @apiName PostUserRegister
+ * @api {post} /users/register
+ * @apiDescription Signup as authenticated User
+ * @apiGroup Users
+ * @apiPermission none
+ * @apiSuccess {String} name The Name of the User
+ * @apiSuccess {String} email The email of the User
+ * @apiSuccess {String} phone The phone number of the User
+ * @apiSuccess {Boolean} isAdmin The Admin status of the User
+ * @apiSuccess {String} street The street name of the User
+ * @apiSuccess {String} apartment The apartment number of the User
+ * @apiSuccess {String} postcode The postcode of the User
+ * @apiSuccess {String} city The City of the User
+ * @apiSuccess {String} country The country of the User
+ * @apiSuccess {String} id The Id of the User
+ * @apiError SignupFailed (400) Signup Failed 
+ */
 router.post(`/register`, async(req, res) => {
   let user = new User({
     name: req.body.name,
@@ -97,23 +202,19 @@ router.post(`/register`, async(req, res) => {
   if (!user) {
     return res.status(400).send('User registration unsuccessful')
   }
-
   res.send(user)
 })
 
-router.get(`/get/count`, async(req, res) => {
-  const userCount = await User.countDocuments(count => count)
-
-  if (!userCount) {
-    res.status(500).json({
-      success: false
-    })
-  }
-  res.send({
-    userCount: userCount
-  })
-})
-
+// DELETE REQUESTS
+/**
+ * @apiName DeleteUser
+ * @api {delete} /users/:id
+ * @apiDescription Delete an existing User
+ * @apiParam {String} id String value of the category ID
+ * @apiGroup User
+ * @apiPermission Admin
+ * @apiError UserNotDeleted (404) The User could not be deleted
+ */
 router.delete(`/:id`, (req, res) => {
   User.findByIdAndRemove(req.params.id)
   .then(user => {

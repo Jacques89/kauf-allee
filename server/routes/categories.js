@@ -117,11 +117,11 @@ router.put(`/:id`, async(req, res) => {
 /**
  * @apiName DeleteCategory
  * @api {delete} /categories/:id
- * @apiDescription Update an existing Category
+ * @apiDescription Delete an existing Category
  * @apiParam {String} id String value of the category ID
  * @apiGroup Categories 
  * @apiPermission Admin
- * @apiError CategoryNotUDeleted (404) The Category could not be deleted
+ * @apiError CategoryNotDeleted (404) The Category could not be deleted
  */
 router.delete(`/:id`, (req, res) => {
   Category.findByIdAndRemove(req.params.id)
