@@ -17,7 +17,7 @@ const { User } = require('../models/user')
  * @api {get} /users
  * @apiDescription Get the Users information
  * @apiGroup Users
- * @apiPermission Admin
+ * @apiPermission admin
  * @apiSuccess {String} name The Name of the User
  * @apiSuccess {String} email The email of the User
  * @apiSuccess {String} phone The phone number of the User
@@ -47,7 +47,7 @@ router.get(`/`, async(req, res) =>{
  * @apiDescription Get a specific User
  * @apiParam {String} id The String value of the User ID
  * @apiGroup Users
- * @apiPermission Admin
+ * @apiPermission admin
  * @apiSuccess {String} name The Name of the User
  * @apiSuccess {String} email The email of the User
  * @apiSuccess {String} phone The phone number of the User
@@ -76,7 +76,7 @@ router.get('/:id', async(req, res) => {
  * @api {get} 
  * @apiDescription Get the number of Users
  * @apiGroup Users
- * @apiPermission Admin
+ * @apiPermission admin
  * @apiSuccess {Number} userCount The number of Users
  * @apiError NoAccessRight (401) User is not authorized 
  */
@@ -99,7 +99,7 @@ router.get(`/get/count`, async(req, res) => {
  * @api {post} /users
  * @apiDescription Create a new User
  * @apiGroup Users
- * @apiPermission Admin
+ * @apiPermission admin
  * @apiSuccess {String} name The Name of the User
  * @apiSuccess {String} email The email of the User
  * @apiSuccess {String} phone The phone number of the User
@@ -212,7 +212,7 @@ router.post(`/register`, async(req, res) => {
  * @apiDescription Delete an existing User
  * @apiParam {String} id String value of the category ID
  * @apiGroup User
- * @apiPermission Admin
+ * @apiPermission admin
  * @apiError UserNotDeleted (404) The User could not be deleted
  */
 router.delete(`/:id`, (req, res) => {

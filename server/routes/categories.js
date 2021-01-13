@@ -62,12 +62,13 @@ router.get(`/:id`, async(req, res) => {
  * @api {post} /categories
  * @apiDescription Create a new Category
  * @apiGroup Categories 
- * @apiPermission Admin
+ * @apiPermission admin
  * @apiSuccess {String} id The id of the Category
  * @apiSuccess {String} name The name of the Category
  * @apiSuccess {String} icon The Icon of the Category
  * @apiSuccess {String} color The color of the Category TODO BETTER DESCRIPTION
  * @apiError CategoryNotCreated(404) The Category cannot be created!
+ * @apiError NoAccessRights (401) User is not authorized
  */
 router.post(`/`, async(req, res) => {
   let category = new Category({
@@ -90,12 +91,13 @@ router.post(`/`, async(req, res) => {
  * @apiDescription Update an existing Category
  * @apiParam {String} id String value of the Category ID
  * @apiGroup Categories 
- * @apiPermission Admin
+ * @apiPermission admin
  * @apiSuccess {String} id The id of the Category
  * @apiSuccess {String} name The name of the Category
  * @apiSuccess {String} icon The Icon of the Category
  * @apiSuccess {String} color The color of the Category
  * @apiError CategoryNotUpdated (404) The Category cannot be updated
+ * @apiError NoAccessRights (401) User is not authorized
  */
 router.put(`/:id`, async(req, res) => {
   const category = await Category.findByIdAndUpdate(
@@ -120,8 +122,9 @@ router.put(`/:id`, async(req, res) => {
  * @apiDescription Delete an existing Category
  * @apiParam {String} id String value of the category ID
  * @apiGroup Categories 
- * @apiPermission Admin
+ * @apiPermission admin
  * @apiError CategoryNotDeleted (404) The Category could not be deleted
+ * @apiError NoAccessRights (401) User is not authorized
  */
 router.delete(`/:id`, (req, res) => {
   Category.findByIdAndRemove(req.params.id)

@@ -149,7 +149,8 @@ router.get(`/get/featured/:count`, async(req, res) => {
  * @apiSuccess {Boolean} isFeatured The boolean value if the Product is on the landing page 
  * @apiSuccess {Date} dateCreated The date the Product was created
  * @apiError InvalidCategory (400) The Category was not valid
- * @apiError ProductCountNotFound (500) The Product could not be created
+ * @apiError ProductNotFound (500) The Product could not be created
+ * @apiError NoAccessRights (401) User is not authorized
  */
 router.post(`/`, async(req, res) => {
   const category = await Category.findById(req.body.category)
@@ -203,6 +204,7 @@ router.post(`/`, async(req, res) => {
  * @apiSuccess {Date} dateCreated The date the Product was created
  * @apiError InvalidProductId (400) The Product Id was not valid
  * @apiError InvalidCategory (400) The Category was not valid
+ * @apiError NoAccessRights (401) User is not authorized
  */
 router.put(`/:id`, async(req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
