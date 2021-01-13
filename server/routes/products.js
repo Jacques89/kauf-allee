@@ -83,9 +83,8 @@ router.get(`/:id`, async(req, res) => {
  * @apiName GetProductCount
  * @api {get} /get/count 
  * @apiDescription Get the Product quantity in the database
- * @apiParam {Number} count is the quantity of Products retrieved from the request.
  * @apiGroup Products
- * @apiPermission none
+ * @apiPermission admin
  * @apiSuccess {Number} productCount The quantity of overall Products
  * @apiError ProductCountNotFound (500) The Product count could not be retrieved
  */
@@ -101,6 +100,7 @@ router.get(`/get/count`, async(req, res) => {
     productCount: productCount
   })
 })
+
 /**
  * @apiName GetFeaturedProduct
  * @api {get} /get/featured/:count 

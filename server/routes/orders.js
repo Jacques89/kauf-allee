@@ -81,6 +81,55 @@ router.get(`/:id`, async(req, res) => {
   res.send(order)
 })
 
+/**
+ * @apiName GetTotalSales
+ * @api {get} /orders/get/totalsales
+ * @apiDescription Get the total sales sum
+ * @apiGroup Orders
+ * @apiPermission admin
+ * @apiSuccess {Number} totalSales The Total sales of purchases
+ * @apiError NoAccessRights 401 User is not authorized
+ */
+router.get(`/get/totalsales`, async(req, res) => {
+  const totalSales = await Order.aggregate([
+    { 
+      $group: { 
+        _id: null, 
+        totalsales: { 
+          $sum: '$totalPrice' 
+        } 
+      } 
+    }
+  ])
+
+  if (!totalSales) {
+    return res.status(400).send('The total sales cannot be generated')
+  }
+  res.send({ totalsales: totalSales.pop().totalsales })
+})
+
+/**
+ * @apiName GetOrderCount
+ * @api {get} /get/count 
+ * @apiDescription Get the overall Order quantity
+ * @apiGroup Orders
+ * @apiPermission admin
+ * @apiSuccess {Number} productCount The quantity of overall Orders
+ * @apiError OrderCountNotFound (500) The Order count could not be retrieved
+ */
+router.get(`/get/count`, async(req, res) => {
+  const orderCount = await Order.countDocuments(count => count)
+
+  if (!orderCount) {
+    res.status(500).json({
+      success: false
+    })
+  }
+  res.send({
+    orderCount: orderCount
+  })
+})
+
 // POST REQUESTS
 /**
  * @apiName PostOrders
@@ -97,7 +146,7 @@ router.get(`/:id`, async(req, res) => {
  * @apiSuccess {String} country The country provided by the User
  * @apiSuccess {String} phone The phone number provided by the User
  * @apiSuccess {Object} user The id of the User that made the Order
- * @apiSuccess {Date} dateOrderedThe date the Order was placed
+ * @apiSuccess {Date} dateOrdered The date the Order was placed
  * @apiSuccess {String} id The Order Id
  */
 router.post(`/`, async(req, res) => {
@@ -112,6 +161,15 @@ router.post(`/`, async(req, res) => {
   }))
   const orderItemIdsResolved = await orderItemsIds
 
+  const totalPrices = await Promise.all(orderItemIdsResolved.map(async orderItemId => {
+    const orderItem = await OrderItem.findById(orderItemId).populate('product', 'price')
+    const totalPrice = orderItem.product.price * orderItem.quantity
+
+    return totalPrice
+  }))
+
+  const totalPrice = totalPrices.reduce((a, b) => a + b, 0)
+
   let order = new Order({
     orderItems: orderItemIdsResolved,
     shippingAddress1: req.body.shippingAddress1,
@@ -121,7 +179,7 @@ router.post(`/`, async(req, res) => {
     country: req.body.country,
     phone: req.body.phone,
     status: req.body.status,
-    totalPrice: req.body.totalPrice,
+    totalPrice: totalPrice,
     user: req.body.user
   })
   order = await order.save()
