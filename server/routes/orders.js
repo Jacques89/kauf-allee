@@ -114,7 +114,7 @@ router.get(`/get/totalsales`, async(req, res) => {
  * @apiDescription Get the overall Order quantity
  * @apiGroup Orders
  * @apiPermission admin
- * @apiSuccess {Number} productCount The quantity of overall Orders
+ * @apiSuccess {Number} orderCount The quantity of overall Orders
  * @apiError OrderCountNotFound (500) The Order count could not be retrieved
  */
 router.get(`/get/count`, async(req, res) => {
@@ -128,6 +128,34 @@ router.get(`/get/count`, async(req, res) => {
   res.send({
     orderCount: orderCount
   })
+})
+
+/**
+ * @apiName GetUserOrderCount
+ * @api {get} /get/userorders/:userid
+ * @apiDescription Get the quantity of user Orders
+ * @apiGroup Orders
+ * @apiPermission none
+ * @apiSuccess {Object[]} orderItems The quantity of overall Orders made by the User
+ * @apiError OrderCountNotFound (500) The Order count could not be retrieved
+ */
+router.get(`/get/userorders/:userid`, async(req, res) => {
+  const userOrderList = await Order.find({ user: req.params.userid })
+  .populate({ 
+    path: 'orderItems', 
+    populate: {
+      path: 'product',
+      populate: 'category'
+    } 
+  })
+  .sort({ dateOrdered: -1 })
+
+  if (!userOrderList) {
+    res.status(500).json({
+      success: false
+    })
+  }
+  res.send(userOrderList)
 })
 
 // POST REQUESTS
