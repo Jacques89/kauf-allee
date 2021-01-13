@@ -47,7 +47,7 @@ router.get(`/`, async(req, res) => {
  * @apiDescription Create a new Order
  * @apiGroup Orders
  * @apiPermission admin
- * @apiSuccess {String[]} orderItems Array of Order items the user ordered
+ * @apiSuccess {Obj[]} orderItems Array of Order items the user ordered
  * @apiSuccess {String} status The status of the Order
  * @apiSuccess {String} shippingAddress1 The first line of the shipping address
  * @apiSuccess {String} shippingAddress2 The second line of the shipping address
