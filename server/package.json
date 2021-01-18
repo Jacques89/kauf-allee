@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "nodemon app.js",
+    "dev": "NODE_ENV=test node app.js",
     "test": "mocha 'test/**/*.js' --recursive --timeout 60000 --exit"
   },
   "author": "Jacques Nalletamby",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "mocha": "^8.2.1",
     "mongodb-memory-server": "^6.9.3",
     "nodemon": "^2.0.7",
     "sinon": "^9.2.3",
