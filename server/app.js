@@ -34,32 +34,32 @@ app.use(`${api}/orders`, ordersRoutes)
 
 // Database
 if (process.env.NODE_ENV === "test") {
-  const { MongoMemoryServer } = require('mongodb-memory-server')
-  const mongoServer = new MongoMemoryServer();
+  const { MongoMemoryServer } = require("mongodb-memory-server")
+  const mongoServer = new MongoMemoryServer()
 
   mongoose.Promise = Promise;
   mongoServer.getUri().then((mongoUri) => {
-  const mongooseOpts = {
-    // options for mongoose 4.11.3 and above
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-  };
-
-  mongoose.connect(mongoUri, mongooseOpts);
-
-  mongoose.connection.on('error', (e) => {
-    if (e.message.code === 'ETIMEDOUT') {
-      console.log(e);
-      mongoose.connect(mongoUri, mongooseOpts);
+    const mongooseOpts = {
+      // options for mongoose 4.11.3 and above
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
     }
-    console.log(e);
-  });
 
-  mongoose.connection.once('open', () => {
-    console.log(`MongoDB successfully connected to ${mongoUri}`);
-  });
-});
+    mongoose.connect(mongoUri, mongooseOpts)
+
+    mongoose.connection.on("error", (e) => {
+      if (e.message.code === "ETIMEDOUT") {
+        console.log(e)
+        mongoose.connect(mongoUri, mongooseOpts)
+      }
+      console.log(e)
+    })
+
+    mongoose.connection.once("open", () => {
+      console.log(`MongoDB successfully connected to ${mongoUri}`);
+    })
+  })
 } else {
   mongoose
     .connect(process.env.DATABASE, {
