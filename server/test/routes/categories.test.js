@@ -1,100 +1,115 @@
-const chai = require('chai')
+const chai = require("chai")
 
 const { expect } = chai
-const chaiHttp = require('chai-http')
-const mongoose = require('mongoose')
+const chaiHttp = require("chai-http")
+const mongoose = require("mongoose")
+import router from '../../routes/categories'
 
-const { Category } = require('../../models/category')
+const { Category } = require("../../models/category")
 
 chai.use(chaiHttp)
-require('dotenv').config()
+require("dotenv").config()
 
-describe('Routes', () => {
+describe("Routes", () => {
   /**
    * /GET REQUESTS
    */
-  describe('/GET categories', () => {
-    it('should GET all the categories', (done) => {
+  describe("/GET categories", () => {
+    it("should GET all the categories", (done) => {
       chai
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-        .get('/categories')
+        .get("/categories")
         .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
-          expect(res.body).to.be.an('array')
-          expect(res.body.length).to.be.eql(3)
+          expect(res).to.have.property("statusCode", 200);
+          expect(res.body).to.be.an("array");
+          expect(res.body.length).to.be.eql(3);
           done()
         })
     })
   })
 
-  describe('/GET categories/:id', () => {
-    it('should GET a category ID', (done) => {
-      chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-        .get('/categories/6006fa5e049e52062be08a7f')
-        .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
-          expect(res.body).to.have.property('_id', '6006fa5e049e52062be08a7f')
-          expect(res.body).to.be.an('object')
-          done()
-        })
+  describe("/GET/:id categories", () => {
+    it("it should GET a category given the id", (done) => {
+      let category = new Category({
+        name: 'test',
+        icon: 'test-icon',
+        color: '#fffff',
+      })
+      category.save()
+      .then(category => {
+        console.log(category)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    chai
+      .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+      .get(`/categories/${category._id}`, console.log(`/categories/${category._id}`))
+      .send(category)
+      .end((err, res) => {
+        console.log(res.body)
+        expect(res.body).to.be.an("object")
+        expect(res).to.have.property("statusCode", 200)
+        expect(res.body).to.have.property("_id").eql(_id)
+        done()
+      })
     })
   })
 
   /**
    * /POST REQUESTS
    */
-  describe('/POST categories', () => {
-    let token
+  // describe('/POST categories', () => {
+  //   let token
 
-    before((done) => {
-      chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-        .post('/users/login')
-        .send({
-          email: 'test@test.com',
-          password: '123456',
-        })
-        .end((err, res) => {
-          if (err) {
-            throw err
-          }
-          token = res.body.token
-          done()
-        })
-    })
+  //   before((done) => {
+  //     chai
+  //       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+  //       .post('/users/login')
+  //       .send({
+  //         email: 'test@test.com',
+  //         password: '123456',
+  //       })
+  //       .end((err, res) => {
+  //         if (err) {
+  //           throw err
+  //         }
+  //         token = res.body.token
+  //         done()
+  //       })
+  //   })
 
-    after((done) => {
-      Category.remove({ name: 'Test' })
-      done()
-    })
+  //   after((done) => {
+  //     Category.remove({})
+  //     done()
+  //   })
 
-    it('should POST a category', (done) => {
-      const mockCategory = {
-        name: 'Test',
-        icon: 'test-icon',
-        color: '#242422',
-      }
-      chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-        .post('/categories')
-        .set({ Authorization: `Bearer ${token}` })
-        .send(mockCategory)
-        .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
-          expect(res.body).to.be.an('object')
-          done()
-        })
-    })
-  })
-  /**
-   * DELETE REQUESTS
-   */
-  // describe('/DELETE categories', () => {
+  //   it('should POST a category', (done) => {
+  //     const mockCategory = {
+  //       name: 'Test',
+  //       icon: 'test-icon',
+  //       color: '#242422',
+  //     }
+  //     chai
+  //       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+  //       .post('/categories')
+  //       .set({ Authorization: `Bearer ${token}` })
+  //       .send(mockCategory)
+  //       .end((err, res) => {
+  //         expect(res).to.have.property('statusCode', 200)
+  //         expect(res.body).to.be.an('object')
+  //         done()
+  //       })
+  //   })
+  // })
+  // /**
+  //  * DELETE REQUESTS
+  //  */
+  // describe('/DELETE categories/:id', () => {
   //   it('should delete a category', (done) => {
   //     chai
   //       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-  //       .delete()
+  //       .delete('/categories/' + Category._id)
   //   })
   // })
 })
