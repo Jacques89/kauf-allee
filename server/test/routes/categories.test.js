@@ -1,57 +1,56 @@
-const chai = require("chai")
+process.env.NODE_ENV = 'test'
+
+const chai = require('chai')
 
 const { expect } = chai
-const chaiHttp = require("chai-http")
-const mongoose = require("mongoose")
-import router from '../../routes/categories'
+const chaiHttp = require('chai-http')
+const mongoose = require('mongoose')
+const server = require('../../app')
 
-const { Category } = require("../../models/category")
+const { Category } = require('../../models/category')
 
 chai.use(chaiHttp)
-require("dotenv").config()
+require('dotenv').config()
 
-describe("Routes", () => {
+describe('Routes', () => {
   /**
    * /GET REQUESTS
    */
-  describe("/GET categories", () => {
-    it("should GET all the categories", (done) => {
+  describe('/GET categories', () => {
+    it('should GET all the categories', (done) => {
       chai
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-        .get("/categories")
+        .get('/categories')
         .end((err, res) => {
-          expect(res).to.have.property("statusCode", 200);
-          expect(res.body).to.be.an("array");
-          expect(res.body.length).to.be.eql(3);
+          expect(res).to.have.property('statusCode', 200)
+          expect(res.body).to.be.an('array')
+          expect(res.body.length).to.be.eql(3)
           done()
         })
     })
   })
 
-  describe("/GET/:id categories", () => {
-    it("it should GET a category given the id", (done) => {
+  describe('/GET/:id categories', () => {
+    it('it should GET a category given the id', (done) => {
       let category = new Category({
         name: 'test',
         icon: 'test-icon',
         color: '#fffff',
       })
-      category.save()
-      .then(category => {
-        console.log(category)
-      })
-      .catch(err => {
-        console.log(err)
+      category.save(function(err, category) {
+        if (err) return console.log(err)
       })
     chai
       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-      .get(`/categories/${category._id}`, console.log(`/categories/${category._id}`))
-      .send(category)
+      .get(`/categories/${category._id}`)
       .end((err, res) => {
-        console.log(res.body)
-        expect(res.body).to.be.an("object")
-        expect(res).to.have.property("statusCode", 200)
-        expect(res.body).to.have.property("_id").eql(_id)
+        expect(res.body).to.be.an('object')
+        expect(res).to.have.property('statusCode', 200)
+        expect(res.body).to.have.property('_id').eql(`${category._id}`)
         done()
+      })
+      afterEach(async() => {
+        await Category.deleteMany({ name: 'test' })
       })
     })
   })
