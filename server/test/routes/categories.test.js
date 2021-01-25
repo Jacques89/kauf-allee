@@ -128,7 +128,6 @@ describe('Routes', () => {
     })
     category.save(function(err, category) {
       if (err) return console.log(err)
-      console.log(category)
     })
     it('should DELETE a category', (done) => {
       chai
