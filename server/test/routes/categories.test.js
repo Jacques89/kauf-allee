@@ -13,11 +13,6 @@ chai.use(chaiHttp)
 require('dotenv').config()
 
 describe('Routes', () => {
-  beforeEach((done) => {
-    Category.remove({}, (err) => {
-       done()
-    })
-  })
   /**
    * /GET REQUESTS
    */
@@ -29,7 +24,7 @@ describe('Routes', () => {
         .end((err, res) => {
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('array')
-          expect(res.body.length).to.be.eql(0)
+          expect(res.body.length).to.be.eql(1)
           done()
         })
     })
@@ -108,6 +103,7 @@ describe('Routes', () => {
    */
   describe('/DELETE categories/:id', () => {
     let token
+
     before(done => {
       chai
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
@@ -133,13 +129,13 @@ describe('Routes', () => {
       if (err) return console.log(err)
       console.log(category)
     })
-    it('should delete a category', (done) => {
+    it('should DELETE a category', (done) => {
       chai
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .delete(`/categories/${category._id}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
+          expect(res.body).to.have.property('message', 'Category deleted successfully!')
           expect(res.body).to.be.an('object')
           done()
         })
