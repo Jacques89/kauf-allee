@@ -22,9 +22,10 @@ describe('Routes', () => {
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .get('/categories')
         .end((err, res) => {
+          console.log(res)
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('array')
-          expect(res.body.length).to.be.eql(3)
+          expect(res.body.length).to.be.eql(4)
           done()
         })
     })
@@ -50,14 +51,14 @@ describe('Routes', () => {
         done()
       })
       afterEach(async() => {
-        await Category.deleteMany({ name: 'test' })
+        await Category.deleteOne({ name: 'test' })
       })
     })
   })
 
-  /**
-   * /POST REQUESTS
-   */
+  // /**
+  //  * /POST REQUESTS
+  //  */
   describe('/POST categories', () => {
     let token
 
@@ -98,14 +99,57 @@ describe('Routes', () => {
         })
     })
   })
-  // /**
-  //  * DELETE REQUESTS
-  //  */
-  // describe('/DELETE categories/:id', () => {
-  //   it('should delete a category', (done) => {
-  //     chai
-  //       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-  //       .delete('/categories/' + Category._id)
-  //   })
+  /**
+   * DELETE REQUESTS
+   */
+  describe('/DELETE categories/:id', () => {
+    let token
+    before(done => {
+      chai
+        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .post('/users/login')
+        .send({
+          email: 'test@test.com',
+          password: '123456',
+        })
+        .end((err, res) => {
+          if (err) {
+            throw err
+          }
+          token = res.body.token
+          done()
+        })
+    })
+    let category = new Category({
+      name: 'test',
+      icon: 'test-icon',
+      color: '#fffff',
+    })
+    category.save(function(err, category) {
+      if (err) return console.log(err)
+      console.log(category)
+    })
+    it('should delete a category', (done) => {
+      chai
+        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .delete(`/categories/${category._id}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .end((err, res) => {
+          console.log(res.body)
+          expect(res).to.have.property('statusCode', 200)
+          expect(res.body).to.be.an('object')
+          done()
+        })
+    })
+  })
+  // after(function(done) {
+  //   Category.deleteMany({})
+  //     .then(() => {
+  //       return mongoose.disconnect()
+  //     })
+  //     .then(() => {
+  //       done()
+  //     })
   // })
 })
+
