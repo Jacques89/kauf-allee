@@ -22,9 +22,10 @@ describe('Routes', () => {
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .get('/categories')
         .end((err, res) => {
+          console.log(res)
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('array')
-          expect(res.body.length).to.be.eql(1)
+          expect(res.body.length).to.be.eql(2)
           done()
         })
     })
@@ -78,7 +79,7 @@ describe('Routes', () => {
         })
     })
     it('should POST a category', (done) => {
-      const mockCategory = {
+      const category = {
         name: 'Test',
         icon: 'test-icon',
         color: '#242422',
@@ -87,7 +88,7 @@ describe('Routes', () => {
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .post('/categories')
         .set({ Authorization: `Bearer ${token}` })
-        .send(mockCategory)
+        .send(category)
         .end((err, res) => {
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('object')
@@ -135,6 +136,7 @@ describe('Routes', () => {
         .delete(`/categories/${category._id}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
+          expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.have.property('message', 'Category deleted successfully!')
           expect(res.body).to.be.an('object')
           done()
