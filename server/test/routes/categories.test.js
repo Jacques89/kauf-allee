@@ -13,6 +13,11 @@ chai.use(chaiHttp)
 require('dotenv').config()
 
 describe('Routes', () => {
+  beforeEach((done) => {
+    Category.remove({}, (err) => {
+       done()
+    })
+  })
   /**
    * /GET REQUESTS
    */
@@ -22,10 +27,9 @@ describe('Routes', () => {
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .get('/categories')
         .end((err, res) => {
-          console.log(res)
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('array')
-          expect(res.body.length).to.be.eql(4)
+          expect(res.body.length).to.be.eql(0)
           done()
         })
     })
@@ -50,15 +54,15 @@ describe('Routes', () => {
         expect(res.body).to.have.property('_id').eql(`${category._id}`)
         done()
       })
-      afterEach(async() => {
+      after(async() => {
         await Category.deleteOne({ name: 'test' })
       })
     })
   })
 
-  // /**
-  //  * /POST REQUESTS
-  //  */
+  /**
+   * /POST REQUESTS
+   */
   describe('/POST categories', () => {
     let token
 
@@ -94,7 +98,7 @@ describe('Routes', () => {
           expect(res.body).to.be.an('object')
           done()
         })
-        afterEach(async() => {
+        after(async() => {
           await Category.deleteMany({ name: 'Test' })
         })
     })
@@ -135,21 +139,11 @@ describe('Routes', () => {
         .delete(`/categories/${category._id}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          console.log(res.body)
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('object')
           done()
         })
     })
   })
-  // after(function(done) {
-  //   Category.deleteMany({})
-  //     .then(() => {
-  //       return mongoose.disconnect()
-  //     })
-  //     .then(() => {
-  //       done()
-  //     })
-  // })
 })
 
