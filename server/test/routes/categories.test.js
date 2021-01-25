@@ -12,7 +12,7 @@ const { Category } = require('../../models/category')
 chai.use(chaiHttp)
 require('dotenv').config()
 
-describe('Routes', () => {
+describe('Category Routes', () => {
   /**
    * /GET REQUESTS
    */
@@ -22,7 +22,6 @@ describe('Routes', () => {
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .get('/categories')
         .end((err, res) => {
-          console.log(res)
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('array')
           expect(res.body.length).to.be.eql(2)
@@ -38,8 +37,8 @@ describe('Routes', () => {
         icon: 'test-icon',
         color: '#fffff',
       })
-      category.save(function(err, category) {
-        if (err) return console.log(err)
+      category.save((err, category) => {
+        if (err) throw err
       })
     chai
       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
