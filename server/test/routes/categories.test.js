@@ -58,49 +58,46 @@ describe('Routes', () => {
   /**
    * /POST REQUESTS
    */
-  // describe('/POST categories', () => {
-  //   let token
+  describe('/POST categories', () => {
+    let token
 
-  //   before((done) => {
-  //     chai
-  //       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-  //       .post('/users/login')
-  //       .send({
-  //         email: 'test@test.com',
-  //         password: '123456',
-  //       })
-  //       .end((err, res) => {
-  //         if (err) {
-  //           throw err
-  //         }
-  //         token = res.body.token
-  //         done()
-  //       })
-  //   })
-
-  //   after((done) => {
-  //     Category.remove({})
-  //     done()
-  //   })
-
-  //   it('should POST a category', (done) => {
-  //     const mockCategory = {
-  //       name: 'Test',
-  //       icon: 'test-icon',
-  //       color: '#242422',
-  //     }
-  //     chai
-  //       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-  //       .post('/categories')
-  //       .set({ Authorization: `Bearer ${token}` })
-  //       .send(mockCategory)
-  //       .end((err, res) => {
-  //         expect(res).to.have.property('statusCode', 200)
-  //         expect(res.body).to.be.an('object')
-  //         done()
-  //       })
-  //   })
-  // })
+    before((done) => {
+      chai
+        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .post('/users/login')
+        .send({
+          email: 'test@test.com',
+          password: '123456',
+        })
+        .end((err, res) => {
+          if (err) {
+            throw err
+          }
+          token = res.body.token
+          done()
+        })
+    })
+    it('should POST a category', (done) => {
+      const mockCategory = {
+        name: 'Test',
+        icon: 'test-icon',
+        color: '#242422',
+      }
+      chai
+        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .post('/categories')
+        .set({ Authorization: `Bearer ${token}` })
+        .send(mockCategory)
+        .end((err, res) => {
+          expect(res).to.have.property('statusCode', 200)
+          expect(res.body).to.be.an('object')
+          done()
+        })
+        afterEach(async() => {
+          await Category.deleteMany({ name: 'Test' })
+        })
+    })
+  })
   // /**
   //  * DELETE REQUESTS
   //  */
