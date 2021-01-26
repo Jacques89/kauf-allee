@@ -6,6 +6,7 @@ const { expect } = chai
 const chaiHttp = require('chai-http')
 const mongoose = require('mongoose')
 const server = require('../../app')
+const { userAuth } = require('../helpers/test-handlers')
 
 const { Category } = require('../../models/category')
 
@@ -13,6 +14,7 @@ chai.use(chaiHttp)
 require('dotenv').config()
 
 describe('Category Routes', () => {
+  // Empty the database
   after(done => {
     Category.deleteMany({}, err => {
       done()
@@ -23,6 +25,7 @@ describe('Category Routes', () => {
    */
   describe('/GET categories', () => {
     it('should GET all the categories', (done) => {
+      // Empty the database before fetching the categories
       before(done => {
         Category.deleteMany({}, err => {
           done()
@@ -54,6 +57,7 @@ describe('Category Routes', () => {
       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
       .get(`/categories/${category._id}`)
       .end((err, res) => {
+        console.log(category)
         expect(res.body).to.be.an('object')
         expect(res).to.have.property('statusCode', 200)
         expect(res.body).to.have.property('_id').eql(`${category._id}`)
@@ -127,7 +131,6 @@ describe('Category Routes', () => {
     })
     category.save((err, category) => {
       if (err) throw err
-      console.log(category)
     })
     it('should DELETE a category given the id', (done) => {
       chai
@@ -137,6 +140,7 @@ describe('Category Routes', () => {
         .end((err, res) => {
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.have.property('message').eql('Category deleted successfully!')
+          expect(res.body).to.have.property('success').eql(true)
           expect(res.body).to.be.an('object')
           done()
         })
