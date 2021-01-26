@@ -5,7 +5,7 @@ const chai = require('chai')
 const { expect } = chai
 const chaiHttp = require('chai-http')
 const mongoose = require('mongoose')
-const server = require('../../app')
+const app = require('../../app')
 const { userAuth } = require('../helpers/test-handlers')
 
 const { Category } = require('../../models/category')
@@ -14,6 +14,7 @@ chai.use(chaiHttp)
 require('dotenv').config()
 
 describe('Category Routes', () => {
+  const server = `${process.env.BASE_URL}${process.env.API_URL}`
   // Empty the database
   after(done => {
     Category.deleteMany({}, err => {
@@ -32,19 +33,19 @@ describe('Category Routes', () => {
         })
       })
       chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .request(server)
         .get('/categories')
         .end((err, res) => {
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('array')
-          expect(res.body.length).to.be.eql(1)
+          expect(res.body.length).to.be.eql(0)
           done()
         })
     })
   })
 
   describe('/GET/:id categories', () => {
-    it('it should GET a category given the id', (done) => {
+    it('should GET a category given the id', (done) => {
       let category = new Category({
         name: 'test',
         icon: 'test-icon',
@@ -52,17 +53,28 @@ describe('Category Routes', () => {
       })
       category.save((err, category) => {
         if (err) throw err
+        chai
+          .request(server)
+          .get(`/categories/${category._id}`)
+          .end((err, res) => {
+            expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode').eql(200)
+            expect(res.body).to.have.property('_id').eql(`${category._id}`)
+            done()
+          })
       })
-    chai
-      .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-      .get(`/categories/${category._id}`)
-      .end((err, res) => {
-        console.log(category)
-        expect(res.body).to.be.an('object')
-        expect(res).to.have.property('statusCode', 200)
-        expect(res.body).to.have.property('_id').eql(`${category._id}`)
-        done()
-      })
+    })
+    it('should show an error message given a false id', (done) => {
+      const fakeId = '600ed7ea059fa61ba4711232'
+      chai
+        .request(server)
+        .get(`/categories/${fakeId}`)
+        .end((err, res) => {
+          expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(500)
+          expect(res.body).to.have.property('message').eql('Category ID was not found')
+          done()
+        })
     })
   })
 
@@ -74,7 +86,7 @@ describe('Category Routes', () => {
 
     before((done) => {
       chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .request(server)
         .post('/users/login')
         .send({
           email: 'test@test.com',
@@ -93,17 +105,82 @@ describe('Category Routes', () => {
         color: '#242422',
       }
       chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .request(server)
         .post('/categories')
         .set({ Authorization: `Bearer ${token}` })
         .send(category)
         .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('object')
           done()
         })
     })
+    it('should throw an error when posted with false information', () => {
+      const falseCategory = {
+        Number: 123,
+        icon: 'test-icon',
+        color: '#242422',
+      }
+      chai
+        .request(server)
+        .post('/categories')
+        .set({ Authorization: `Bearer ${token}` })
+        .send(falseCategory)
+        .end((err, res) => {
+          expect(res).to.have.property('statusCode').eql(500)
+          expect(res.body).to.be.an('object')
+          expect(res.body).to.have.property('message').eql('Category cannot be created!')
+        })
+    })
   })
+  /**
+   * PUT REQUESTS
+   */
+  describe('/PUT categories/:id', () => {
+      let token
+
+      before((done) => {
+        chai
+          .request(server)
+          .post('/users/login')
+          .send({
+            email: 'test@test.com',
+            password: '123456',
+          })
+          .end((err, res) => {
+            if (err) throw err
+            token = res.body.token
+            done()
+          })
+      })
+    it('should UPDATE a category given the id', done => {
+      let category = new Category({
+        name: 'update-test',
+        icon: 'test-icon',
+        color: '#fffff',
+      })
+      const updatedCategory = {
+        name: 'updated-test',
+        icon: 'test-icon',
+        color: '#fffff',
+      }
+      category.save((err, category) => {
+        if (err) throw err
+        chai
+        .request(server)
+        .put(`/categories/${category._id}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .send(updatedCategory)
+        .end((err, res) => {
+          expect(res).to.have.property('statusCode').eql(200)
+          expect(res.body).to.be.an('object')
+          expect(res.body).to.have.property('name').eql('updated-test')
+          done()
+        })
+      })
+    })
+  })
+
   /**
    * DELETE REQUESTS
    */
@@ -112,7 +189,7 @@ describe('Category Routes', () => {
 
     before((done) => {
       chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .request(server)
         .post('/users/login')
         .send({
           email: 'test@test.com',
@@ -124,17 +201,16 @@ describe('Category Routes', () => {
           done()
         })
     })
-    let category = new Category({
-      name: 'delete-test',
-      icon: 'test-icon',
-      color: '#fffff',
-    })
-    category.save((err, category) => {
-      if (err) throw err
-    })
     it('should DELETE a category given the id', (done) => {
-      chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+      let category = new Category({
+        name: 'delete-test',
+        icon: 'test-icon',
+        color: '#fffff',
+      })
+      category.save((err, category) => {
+        if (err) throw err
+        chai
+        .request(server)
         .delete(`/categories/${category._id}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
@@ -144,6 +220,7 @@ describe('Category Routes', () => {
           expect(res.body).to.be.an('object')
           done()
         })
+      })
     })
   })
 })

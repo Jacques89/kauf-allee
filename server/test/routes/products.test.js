@@ -4,9 +4,7 @@ const chai = require('chai')
 
 const { expect } = chai
 const chaiHttp = require('chai-http')
-const { afterEach } = require('mocha')
 const mongoose = require('mongoose')
-const server = require('../../app')
 
 const { Product } = require('../../models/product')
 const { Category } = require('../../models/category')
@@ -15,11 +13,7 @@ chai.use(chaiHttp)
 require('dotenv').config()
 
 describe('Product Routes', () => {
-  after(done => {
-    Category.deleteMany({}, err => {
-      done()
-    })
-  })
+  const server = `${process.env.BASE_URL}${process.env.API_URL}`
   after(done => {
     Product.deleteMany({}, err => {
       done()
@@ -36,7 +30,7 @@ describe('Product Routes', () => {
         })
       })
       chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .request(server)
         .get('/products')
         .end((err, res) => {
           expect(res).to.have.property('statusCode', 200)
@@ -49,20 +43,15 @@ describe('Product Routes', () => {
 
   describe('/GET/:id products', () => {
     it('it should GET a product given the id', (done) => {
-      before(done => {
-        Product.deleteMany({}, err => {
-          done()
-        })
-      })
       let category = new Category({
-        name: 'test',
-        icon: 'test-icon',
+        name: 'Get-category',
+        icon: 'getCategory-icon',
         color: '#fffff',
       })
       let product = new Product({
         name: 'test',
-        description: 'test',
-        mainDescription: 'test',
+        description: 'test description',
+        mainDescription: 'test main description',
         image: '',
         brand: 'test',
         price: 23,
@@ -70,18 +59,24 @@ describe('Product Routes', () => {
         stockCount: 25,
         rating: 5,
         numReviews: 4,
-        isFeatured: true
+        isFeatured: false
       })
       product.save((err, product) => {
         if (err) throw err
+        chai
+          .request(server)
+          .get(`/products/${product._id}`)
+          .end((err, res) => {
+            console.log(err)
+            expect(res.body).to.be.an("object")
+            expect(res).to.have.property("statusCode", 200)
+            expect(res.body).to.have.property("_id").eql(`${product._id}`)
+            done()
+          })
       })
-    chai
-      .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-      .get(`/products/${product._id}`)
-      .end((err, res) => {
-        expect(res.body).to.be.an('object')
-        expect(res).to.have.property('statusCode', 200)
-        expect(res.body).to.have.property('id').eql(`${product._id}`)
+    })
+    after(done => {
+      Category.deleteMany({}, err => {
         done()
       })
     })
@@ -95,7 +90,7 @@ describe('Product Routes', () => {
 
     before((done) => {
       chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+        .request(server)
         .post('/users/login')
         .send({
           email: 'test@test.com',
@@ -109,37 +104,41 @@ describe('Product Routes', () => {
     })
     it('should POST a product', (done) => {
       let category = new Category({
-        name: 'test',
-        icon: 'test-icon',
+        name: 'category',
+        icon: 'category-icon',
         color: '#fffff',
       })
       category.save((err, category) => {
-        if (err) throw err
-        console.log(category)
+        if (err) throw err 
+        const product = {
+          name: 'test',
+          description: 'test',
+          mainDescription: 'test',
+          image: '',
+          brand: 'test',
+          price: 23,
+          category: `${category._id}`,
+          stockCount: 25,
+          rating: 5,
+          numReviews: 4,
+          isFeatured: true
+        }
+        chai
+          .request(server)
+          .post('/products')
+          .set({ Authorization: `Bearer ${token}` })
+          .send(product)
+          .end((err, res) => {
+            expect(res).to.have.property('statusCode', 200)
+            expect(res.body).to.be.an('object')
+            done()
+          })
       })
-      const product = {
-        name: 'test',
-        description: 'test',
-        mainDescription: 'test',
-        image: '',
-        brand: 'test',
-        price: 23,
-        category: `${category._id}`,
-        stockCount: 25,
-        rating: 5,
-        numReviews: 4,
-        isFeatured: true
-      }
-      chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-        .post('/products')
-        .set({ Authorization: `Bearer ${token}` })
-        .send(product)
-        .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
-          expect(res.body).to.be.an('object')
-          done()
-        })
+    })
+    after(done => {
+      Category.deleteMany({}, err => {
+        done()
+      })
     })
   })
   /**
