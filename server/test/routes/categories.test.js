@@ -13,18 +13,28 @@ chai.use(chaiHttp)
 require('dotenv').config()
 
 describe('Category Routes', () => {
+  after(done => {
+    Category.deleteMany({}, err => {
+      done()
+    })
+  })
   /**
    * /GET REQUESTS
    */
   describe('/GET categories', () => {
     it('should GET all the categories', (done) => {
+      before(done => {
+        Category.deleteMany({}, err => {
+          done()
+        })
+      })
       chai
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .get('/categories')
         .end((err, res) => {
           expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('array')
-          expect(res.body.length).to.be.eql(2)
+          expect(res.body.length).to.be.eql(1)
           done()
         })
     })
@@ -49,9 +59,6 @@ describe('Category Routes', () => {
         expect(res.body).to.have.property('_id').eql(`${category._id}`)
         done()
       })
-      after(async() => {
-        await Category.deleteOne({ name: 'test' })
-      })
     })
   })
 
@@ -70,9 +77,7 @@ describe('Category Routes', () => {
           password: '123456',
         })
         .end((err, res) => {
-          if (err) {
-            throw err
-          }
+          if (err) throw err
           token = res.body.token
           done()
         })
@@ -93,9 +98,6 @@ describe('Category Routes', () => {
           expect(res.body).to.be.an('object')
           done()
         })
-        after(async() => {
-          await Category.deleteMany({ name: 'Test' })
-        })
     })
   })
   /**
@@ -104,7 +106,7 @@ describe('Category Routes', () => {
   describe('/DELETE categories/:id', () => {
     let token
 
-    before(done => {
+    before((done) => {
       chai
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .post('/users/login')
@@ -113,29 +115,28 @@ describe('Category Routes', () => {
           password: '123456',
         })
         .end((err, res) => {
-          if (err) {
-            throw err
-          }
+          if (err) throw err
           token = res.body.token
           done()
         })
     })
     let category = new Category({
-      name: 'test',
+      name: 'delete-test',
       icon: 'test-icon',
       color: '#fffff',
     })
-    category.save(function(err, category) {
-      if (err) return console.log(err)
+    category.save((err, category) => {
+      if (err) throw err
+      console.log(category)
     })
-    it('should DELETE a category', (done) => {
+    it('should DELETE a category given the id', (done) => {
       chai
         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
         .delete(`/categories/${category._id}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
           expect(res).to.have.property('statusCode', 200)
-          expect(res.body).to.have.property('message', 'Category deleted successfully!')
+          expect(res.body).to.have.property('message').eql('Category deleted successfully!')
           expect(res.body).to.be.an('object')
           done()
         })

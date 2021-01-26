@@ -4,6 +4,7 @@ const chai = require('chai')
 
 const { expect } = chai
 const chaiHttp = require('chai-http')
+const { afterEach } = require('mocha')
 const mongoose = require('mongoose')
 const server = require('../../app')
 
@@ -12,57 +13,65 @@ const { Product } = require('../../models/product')
 chai.use(chaiHttp)
 require('dotenv').config()
 
-describe('Product Routes', () => {
-  /**
-   * /GET REQUESTS
-   */
-  describe('/GET products', () => {
-    it('should GET all the products', (done) => {
-      chai
-        .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-        .get('/products')
-        .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
-          expect(res.body).to.be.an('array')
-          expect(res.body.length).to.be.eql(1)
-          done()
-        })
-    })
-  })
+// describe('Product Routes', () => {
+//   beforeEach(done => {
+//     Product.remove({}, err => {
+//       done()
+//     })
+//   })
 
-  describe('/GET/:id products', () => {
-    it('it should GET a product given the id', (done) => {
-      let product = new Product({
-        name: 'test',
-        description: 'test',
-        mainDescription: 'test',
-        image: '',
-        brand: 'test',
-        price: 23,
-        category: '600f17789d422b3337131bd0',
-        stockCount: 25,
-        rating: 5,
-        numReviews: 4,
-        isFeatured: true
-      })
-      product.save((err, product) => {
-        if (err) throw err
-      })
-    chai
-      .request(`${process.env.BASE_URL}${process.env.API_URL}`)
-      .get(`/products/${product._id}`)
-      .end((err, res) => {
-        console.log(res)
-        expect(res.body).to.be.an('object')
-        expect(res).to.have.property('statusCode', 200)
-        expect(res.body).to.have.property('id').eql(`${product.id}`)
-        done()
-      })
-      after(async() => {
-        await Product.deleteOne({ name: 'test' })
-      })
-    })
-  })
+//   afterEach(done => {
+//     Product.remove({}, err => {
+//       done()
+//     })
+//   })
+//   /**
+//    * /GET REQUESTS
+//    */
+//   describe('/GET products', () => {
+//     it('should GET all the products', (done) => {
+//       chai
+//         .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+//         .get('/products')
+//         .end((err, res) => {
+//           expect(res).to.have.property('statusCode', 200)
+//           expect(res.body).to.be.an('array')
+//           expect(res.body.length).to.be.eql(0)
+//           done()
+//         })
+//     })
+//   })
+
+//   describe('/GET/:id products', () => {
+//     it('it should GET a product given the id', (done) => {
+//       let product = new Product({
+//         name: 'test',
+//         description: 'test',
+//         mainDescription: 'test',
+//         image: '',
+//         brand: 'test',
+//         price: 23,
+//         category: '600f17789d422b3337131bd0',
+//         stockCount: 25,
+//         rating: 5,
+//         numReviews: 4,
+//         isFeatured: true
+//       })
+//       product.save((err, product) => {
+//         if (err) throw err
+//       })
+//     chai
+//       .request(`${process.env.BASE_URL}${process.env.API_URL}`)
+//       .get(`/products/${product._id}`)
+//       .send(product)
+//       .end((err, res) => {
+//         expect(res.body).to.be.an('object')
+//         expect(res).to.have.property('statusCode', 200)
+//         expect(res.body).to.have.property('id').eql(`${product.id}`)
+//         done()
+//       })
+//     })
+//   })
 
   /**
    * /POST REQUESTS
@@ -150,6 +159,6 @@ describe('Product Routes', () => {
   //       })
   //   })
   // })
-})
+// })
 
 
