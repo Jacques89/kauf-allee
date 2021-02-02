@@ -20,6 +20,23 @@ require('dotenv').config()
 
 describe('Product Routes', () => {
   const server = `${process.env.BASE_URL}${process.env.API_URL}`
+
+  let token
+  // Login to enable authenticated routes
+  before((done) => {
+    chai
+      .request(server)
+      .post('/users/login')
+      .send({
+        email: 'test@test.com',
+        password: '123456',
+      })
+      .end((err, res) => {
+        if (err) throw err
+        token = res.body.token
+        done()
+      })
+  })
   // Empty the database
   after(done => {
     Product.deleteMany({}, err => {
@@ -37,11 +54,6 @@ describe('Product Routes', () => {
    */
   describe('/GET products', () => {
     it('should GET all the products', (done) => {
-      before(done => {
-        Product.deleteMany({}, err => {
-          done()
-        })
-      })
       chai
         .request(server)
         .get('/products')
@@ -87,7 +99,6 @@ describe('Product Routes', () => {
           })
       })
     })
-
     it('should show an error message given a false id', (done) => {
       const fakeId = '600ed7ea059fa61ba4711232'
       chai
@@ -106,23 +117,6 @@ describe('Product Routes', () => {
    * /POST REQUESTS
    */
   describe('/POST products', () => {
-    let token
-    // Login to enable authenticated route
-    before((done) => {
-      chai
-        .request(server)
-        .post('/users/login')
-        .send({
-          email: 'test@test.com',
-          password: '123456',
-        })
-        .end((err, res) => {
-          if (err) throw err
-          token = res.body.token
-          done()
-        })
-    })
-
     it('should POST a product', (done) => {
       let category = new Category({
         name: 'category',
@@ -156,7 +150,6 @@ describe('Product Routes', () => {
           })
       })
     })
-    
     it('should throw an error when posted with false information', () => {
       const fakeProduct = {
         name: 'fake-product',
@@ -189,22 +182,6 @@ describe('Product Routes', () => {
    * DELETE REQUESTS
    */
   describe('/DELETE products/:id', () => {
-    let token
-
-    before(done => {
-      chai
-        .request(server)
-        .post('/users/login')
-        .send({
-          email: 'test@test.com',
-          password: '123456',
-        })
-        .end((err, res) => {
-          if (err) throw err
-          token = res.body.token
-          done()
-        })
-    })
     it('should DELETE a product', (done) => {
       let category = new Category({
         name: 'delete-test',
@@ -238,7 +215,6 @@ describe('Product Routes', () => {
           })
       })
     })
-
     it('should throw an error when given false id', done => {
       const fakeId = '600ed7ea059fa61ba4711212'
       chai
@@ -255,5 +231,3 @@ describe('Product Routes', () => {
     })
   })
 })
-
-
