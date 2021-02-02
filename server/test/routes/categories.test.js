@@ -1,12 +1,17 @@
+/**
+ * categories.tests.js 
+ * @fileoverview Test routes for categories
+ * @author Jacques Nalletamby
+ */
+
 process.env.NODE_ENV = 'test'
 
 const chai = require('chai')
-
 const { expect } = chai
+
 const chaiHttp = require('chai-http')
 const mongoose = require('mongoose')
 const app = require('../../app')
-const { userAuth } = require('../helpers/test-handlers')
 
 const { Category } = require('../../models/category')
 
@@ -250,15 +255,8 @@ describe('Category Routes', () => {
       })
     })
     it('should throw an error when given false id', done => {
-      let category = new Category({
-        name: 'delete-test',
-        icon: 'test-icon',
-        color: '#fffff',
-      })
       const fakeId = '600ed7ea059fa61ba4711232'
-      category.save((err, category) => {
-        if (err) throw err
-        chai
+      chai
         .request(server)
         .delete(`/categories/${fakeId}`)
         .set({ Authorization: `Bearer ${token}` })
@@ -269,7 +267,6 @@ describe('Category Routes', () => {
           expect(res.body).to.be.an('object')
           done()
         })
-      })
     })
   })
 })
