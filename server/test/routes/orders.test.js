@@ -176,7 +176,7 @@ describe('Order Routes', () => {
   /**
    * /POST TESTS
    */
-  describe('/POST orders/:id', () =>{
+  describe('/POST orders', () =>{
     it('should POST an order', (done) => {
       let order = new Order({
         orderItems: [],
@@ -202,6 +202,29 @@ describe('Order Routes', () => {
             done()
           })
       })
+    })
+    it('should throw an error when incorrect information is given', () => {
+      const fakeOrder = {
+        orderItems: [],
+        mainAddress: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        fakeNumber: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      }
+      chai
+        .request(server)
+        .post('/orders')
+        .set({ Authorization: `Bearer ${token}` })
+        .send(fakeOrder)
+        .end((err, res) => {
+          console.log(res)
+          expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(500)
+          expect(res.body).to.have.property('success').eql(false)
+        })
     })
   })
 
@@ -239,6 +262,36 @@ describe('Order Routes', () => {
           })
       })
     })
+    it('should throw an error when provided with a false id', (done) => {
+      let order = new Order({
+        orderItems: [],
+        shippingAddress1: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        phone: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      })
+      const fakeUpdatedOrder = {
+        status: 'shipped'
+      }
+      const fakeId = '600ed7ea059fa61ba4713456'
+      order.save((err, order) => {
+        if (err) throw err
+        chai
+          .request(server)
+          .put(`/orders/${fakeId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send(fakeUpdatedOrder)
+          .end((err, res) => {
+            expect(res).to.have.property('statusCode').eql(404)
+            expect(res.body).to.be.an('object')
+            expect(res.text).eql('Order cannot be updated!')
+            done()
+          })
+      })
+    })
   })
 
   /**
@@ -269,6 +322,20 @@ describe('Order Routes', () => {
             done()
           })
       })
+    })
+    it('should throw an error when given false id', done => {
+      const fakeId = '600ed7ea059fa61ba4712222'
+      chai
+        .request(server)
+        .delete(`/orders/${fakeId}`)
+        .set({ Authorization: `Bearer ${token}` })
+        .end((err, res) => {
+          expect(res).to.have.property('statusCode').eql(404)
+          expect(res.body).to.have.property('message').eql('Order could not be deleted!')
+          expect(res.body).to.have.property('success').eql(false)
+          expect(res.body).to.be.an('object')
+          done()
+        })
     })
   })
 })
