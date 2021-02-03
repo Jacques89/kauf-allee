@@ -14,6 +14,8 @@ const mongoose = require('mongoose')
 
 const { Order } = require('../../models/order')
 const { OrderItem } = require('../../models/order-item')
+const { Product } = require('../../models/product')
+const { Category} = require('../../models/category')
 
 chai.use(chaiHttp)
 require('dotenv').config()
@@ -23,7 +25,7 @@ describe('Order Routes', () => {
 
   // Login to enable authenticated routes
   let token
-  before((done) => {
+  beforeEach((done) => {
     chai
       .request(server)
       .post('/users/login')
@@ -50,7 +52,7 @@ describe('Order Routes', () => {
   })
 
   /**
-   * /GET REQUESTS
+   * /GET TESTS
    */
   describe('/GET orders', () => {
     it('should GET all the orders', (done) => {
@@ -66,9 +68,65 @@ describe('Order Routes', () => {
         })
     })
   })
+
   describe('/GET orders/:id', () => {
     it('should get an order given an id', (done) => {
-      // TODO write logic for test
+      let order = new Order({
+        orderItems: [],
+        shippingAddress1: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        phone: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      })
+      order.save((err, order) => {
+        if (err) throw err
+        chai
+          .request(server)
+          .get(`/orders/${order.id}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .end((err, res) => {
+            expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode', 200)
+            expect(res.body).to.have.property('id').eql(`${order.id}`)
+            done()
+          })
+      })
+    })
+  })
+
+  /**
+   * /POST TESTS
+   */
+  describe('/POST orders', () =>{
+    it('should POST an order', (done) => {
+      let order = new Order({
+        orderItems: [],
+        shippingAddress1: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        phone: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      })
+      order.save((err, order) => {
+        if (err) throw err
+        chai
+          .request(server)
+          .post('/orders')
+          .send(order)
+          .set({ Authorization: `Bearer ${token}` })
+          .end((err, res) => {
+            console.log(res)
+            expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode').eql(200)
+            expect(res.body).to.have.property('city').eql('Berlin')
+            done()
+          })
+      })
     })
   })
 })

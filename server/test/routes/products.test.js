@@ -92,9 +92,9 @@ describe('Product Routes', () => {
           .request(server)
           .get(`/products/${product._id}`)
           .end((err, res) => {
-            expect(res.body).to.be.an("object")
-            expect(res).to.have.property("statusCode", 200)
-            expect(res.body).to.have.property("_id").eql(`${product._id}`)
+            expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode', 200)
+            expect(res.body).to.have.property('_id').eql(`${product._id}`)
             done()
           })
       })
