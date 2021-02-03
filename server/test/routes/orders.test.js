@@ -14,8 +14,6 @@ const mongoose = require('mongoose')
 
 const { Order } = require('../../models/order')
 const { OrderItem } = require('../../models/order-item')
-const { Product } = require('../../models/product')
-const { Category} = require('../../models/category')
 
 chai.use(chaiHttp)
 require('dotenv').config()
@@ -262,7 +260,7 @@ describe('Order Routes', () => {
           })
       })
     })
-    it('should throw an error when provided with a false id', (done) => {
+    it('should throw an error when given a false id', (done) => {
       let order = new Order({
         orderItems: [],
         shippingAddress1: "Deutscheweg 28",
@@ -323,7 +321,7 @@ describe('Order Routes', () => {
           })
       })
     })
-    it('should throw an error when given false id', done => {
+    it('should throw an error when given a false id', done => {
       const fakeId = '600ed7ea059fa61ba4712222'
       chai
         .request(server)
