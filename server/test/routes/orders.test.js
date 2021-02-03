@@ -70,7 +70,7 @@ describe('Order Routes', () => {
   })
 
   describe('/GET orders/:id', () => {
-    it('should get an order given an id', (done) => {
+    it('should GET an order given an order id', (done) => {
       let order = new Order({
         orderItems: [],
         shippingAddress1: "Deutscheweg 28",
@@ -95,12 +95,88 @@ describe('Order Routes', () => {
           })
       })
     })
+    it('should throw an error message when an incorrect order id is given', (done) => {
+      const fakeId = '600ed7ea059fa61ba4711232'
+      let order = new Order({
+        orderItems: [],
+        shippingAddress1: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        phone: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      })
+      order.save((err, order) => {
+        if (err) throw err
+        chai
+          .request(server)
+          .get(`/orders/${fakeId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .end((err, res) => {
+            expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode', 500)
+            expect(res.body).to.have.property('success').eql(false)
+            done()
+          })
+      })
+    })
+    it('should GET an order, given the user id', (done) => {
+      let order = new Order({
+        orderItems: [],
+        shippingAddress1: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        phone: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      })
+      order.save((err, order) => {
+        if (err) throw err
+        chai
+          .request(server)
+          .get(`/orders/get/userorders/${order.user}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .end((err, res) => {
+            expect(res.body).to.be.an('array')
+            expect(res).to.have.property('statusCode', 200)
+            done()
+          })
+      })
+    })
+    it('should throw an error when an incorrect user id is given', (done) => {
+      const fakeUserId = '600ed7ea059fa61ba4719999'
+      let order = new Order({
+        orderItems: [],
+        shippingAddress1: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        phone: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      })
+      order.save((err, order) => {
+        if (err) throw err
+        chai
+          .request(server)
+          .get(`/orders/${fakeUserId}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .end((err, res) => {
+            expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode', 500)
+            expect(res.body).to.have.property('success').eql(false)
+            done()
+          })
+      })
+    })
   })
 
   /**
    * /POST TESTS
    */
-  describe('/POST orders', () =>{
+  describe('/POST orders/:id', () =>{
     it('should POST an order', (done) => {
       let order = new Order({
         orderItems: [],
@@ -120,10 +196,76 @@ describe('Order Routes', () => {
           .send(order)
           .set({ Authorization: `Bearer ${token}` })
           .end((err, res) => {
-            console.log(res)
             expect(res.body).to.be.an('object')
             expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.have.property('city').eql('Berlin')
+            done()
+          })
+      })
+    })
+  })
+
+  /**
+   * PUT TESTS
+   */
+  describe('/PUT orders/:id', () =>{
+    it('should UPDATE an order status given the id', (done) => {
+      // order status' are automatically set to pending when created
+      let order = new Order({
+        orderItems: [],
+        shippingAddress1: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        phone: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      })
+      const updatedOrder = {
+        status: 'shipped'
+      }
+      order.save((err, order) => {
+        if (err) throw err
+        chai
+          .request(server)
+          .put(`/orders/${order._id}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send(updatedOrder)
+          .end((err, res) => {
+            expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode').eql(200)
+            expect(res.body).to.have.property('status').eql('shipped')
+            done()
+          })
+      })
+    })
+  })
+
+  /**
+   * DELETE TESTS
+   */
+  describe('/DELETE orders/:id', () => {
+    it('should DELETE an order given the order id', (done) => {
+      let order = new Order({
+        orderItems: [],
+        shippingAddress1: "Deutscheweg 28",
+        shippingAddress2: "1-A",
+        city: "Berlin",
+        postcode: "10365",
+        country: "Germany",
+        phone: "01834758367",
+        user: "600ed7ea059fa61ba471d318"
+      })
+      order.save((err, order) => {
+        if (err) throw err 
+        chai
+          .request(server)
+          .delete(`/orders/${order.id}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .end((err, res) => {
+            expect(res).to.have.property('statusCode').eql(200)
+            expect(res.body).to.have.property('success').eql(true)
+            expect(res.body).to.have.property('message').eql('Order deleted successfully!')
             done()
           })
       })

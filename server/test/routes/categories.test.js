@@ -172,16 +172,16 @@ describe('Category Routes', () => {
       category.save((err, category) => {
         if (err) throw err
         chai
-        .request(server)
-        .put(`/categories/${category._id}`)
-        .set({ Authorization: `Bearer ${token}` })
-        .send(updatedCategory)
-        .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(200)
-          expect(res.body).to.be.an('object')
-          expect(res.body).to.have.property('name').eql('updated-test')
-          done()
-        })
+          .request(server)
+          .put(`/categories/${category._id}`)
+          .set({ Authorization: `Bearer ${token}` })
+          .send(updatedCategory)
+          .end((err, res) => {
+            expect(res).to.have.property('statusCode').eql(200)
+            expect(res.body).to.be.an('object')
+            expect(res.body).to.have.property('name').eql('updated-test')
+            done()
+          })
       })
     })
     it('should throw an error when provided with a false id', (done) => {
@@ -246,7 +246,7 @@ describe('Category Routes', () => {
         .delete(`/categories/${category._id}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.have.property('message').eql('Category deleted successfully!')
           expect(res.body).to.have.property('success').eql(true)
           expect(res.body).to.be.an('object')
@@ -261,7 +261,7 @@ describe('Category Routes', () => {
         .delete(`/categories/${fakeId}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode', 404)
+          expect(res).to.have.property('statusCode').eql(404)
           expect(res.body).to.have.property('message').eql('Category could not be deleted!')
           expect(res.body).to.have.property('success').eql(false)
           expect(res.body).to.be.an('object')
