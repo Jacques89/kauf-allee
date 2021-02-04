@@ -158,7 +158,7 @@ describe('Category Routes', () => {
             done()
           })
       })
-    it('should UPDATE a category given the id', done => {
+    it('should UPDATE a category given the id', (done) => {
       let category = new Category({
         name: 'update-test',
         icon: 'test-icon',
@@ -254,7 +254,7 @@ describe('Category Routes', () => {
         })
       })
     })
-    it('should throw an error when given false id', done => {
+    it('should throw an error when given false id', (done) => {
       const fakeId = '600ed7ea059fa61ba4711232'
       chai
         .request(server)

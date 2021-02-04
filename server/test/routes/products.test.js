@@ -58,7 +58,7 @@ describe('Product Routes', () => {
         .request(server)
         .get('/products')
         .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('array')
           expect(res.body.length).to.be.eql(0)
           done()
