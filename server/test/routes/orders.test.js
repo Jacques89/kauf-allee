@@ -28,7 +28,7 @@ describe('Order Routes', () => {
       .request(server)
       .post('/users/login')
       .send({
-        email: 'test@test.com',
+        email: 'testadmin@test.com',
         password: '123456',
       })
       .end((err, res) => {
@@ -218,7 +218,6 @@ describe('Order Routes', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send(fakeOrder)
         .end((err, res) => {
-          console.log(res)
           expect(res.body).to.be.an('object')
           expect(res).to.have.property('statusCode').eql(500)
           expect(res.body).to.have.property('success').eql(false)

@@ -28,7 +28,7 @@ describe('Product Routes', () => {
       .request(server)
       .post('/users/login')
       .send({
-        email: 'test@test.com',
+        email: 'testadmin@test.com',
         password: '123456',
       })
       .end((err, res) => {
@@ -79,7 +79,7 @@ describe('Product Routes', () => {
         mainDescription: 'test main description',
         image: '',
         brand: 'test',
-        price: 23,
+        price: 35,
         category: `${category._id}`,
         stockCount: 25,
         rating: 5,
@@ -92,8 +92,18 @@ describe('Product Routes', () => {
           .request(server)
           .get(`/products/${product._id}`)
           .end((err, res) => {
+            console.log(res.body.price)
             expect(res.body).to.be.an('object')
-            expect(res).to.have.property('statusCode', 200)
+            expect(res).to.have.property('statusCode').eql(200)
+            expect(res.body).to.have.property('name').eql(`${product.name}`)
+            expect(res.body).to.have.property('description').eql(`${product.description}`)
+            expect(res.body).to.have.property('mainDescription').eql(`${product.mainDescription}`)
+            expect(res.body).to.have.property('brand').eql(`${product.brand}`)
+            expect(res.body).to.have.property('price').eql(35)
+            expect(res.body).to.have.property('stockCount').eql(25)
+            expect(res.body).to.have.property('rating').eql(5)
+            expect(res.body).to.have.property('numReviews').eql(4)
+            expect(res.body).to.have.property('isFeatured').eql(false)
             expect(res.body).to.have.property('_id').eql(`${product._id}`)
             done()
           })
@@ -175,8 +185,114 @@ describe('Product Routes', () => {
           expect(res.body).to.have.property('message').eql('Product cannot be created!')
         })
     })
-    
   })
+
+  /**
+   * PUT TESTS
+   */
+  describe('/PUT /products/:id', () => {
+    it('should UPDATE a product', () => {
+      let category = new Category({
+        name: 'category',
+        icon: 'category-icon',
+        color: '#fffff',
+      })
+      let product = new Product({
+        name: 'test',
+        description: 'test',
+        mainDescription: 'test',
+        image: '',
+        brand: 'test',
+        price: 23,
+        category: `${category._id}`,
+        stockCount: 25,
+        rating: 5,
+        numReviews: 4,
+        isFeatured: true
+      })
+      category.save((err, category) => {
+        const updatedProduct = {
+          name: 'updated-product',
+          description: 'updated-description',
+          mainDescription: 'new description',
+          image: '',
+          brand: 'brand',
+          price: 29,
+          category: `${category._id}`,
+          stockCount: 25,
+          rating: 5,
+          numReviews: 4,
+          isFeatured: false
+        }
+        product.save((err, product) => {
+          chai
+            .request(server)
+            .put(`/products/${product._id}`)
+            .set({ Authorization: `Bearer ${token}` })
+            .send(updatedProduct)
+            .end((err, res) => {
+              expect(res).to.have.property('statusCode').eql(200)
+              expect(res.body).to.be.an('object')
+              expect(res.body).to.have.property('name').eql(`${updatedProduct.name}`)
+              expect(res.body).to.have.property('description').eql(`${updatedProduct.description}`)
+              expect(res.body).to.have.property('mainDescription').eql(`${updatedProduct.mainDescription}`)
+              expect(res.body).to.have.property('brand').eql(`${updatedProduct.brand}`)
+              expect(res.body).to.have.property('price').eql(29)
+            })
+        })
+      })
+    })
+    it('should throw an error when given a false id', (done) => {
+      let category = new Category({
+        name: 'category',
+        icon: 'category-icon',
+        color: '#fffff',
+      })
+      let product = new Product({
+        name: 'test',
+        description: 'test',
+        mainDescription: 'test',
+        image: '',
+        brand: 'test',
+        price: 23,
+        category: `${category._id}`,
+        stockCount: 25,
+        rating: 5,
+        numReviews: 4,
+        isFeatured: true
+      })
+      category.save((err, category) => {
+        const updatedProduct = {
+          name: 'updated-product',
+          description: 'updated-description',
+          mainDescription: 'new description',
+          image: '',
+          brand: 'brand',
+          price: 29,
+          category: `${category._id}`,
+          stockCount: 25,
+          rating: 5,
+          numReviews: 4,
+          isFeatured: false
+        }
+        product.save((err, product) => {
+          const fakeId = '600ed7ea059fa61ba4711212'
+          chai
+            .request(server)
+            .put(`/products/${fakeId}`)
+            .send(updatedProduct)
+            .set({ Authorization: `Bearer ${token}` })
+            .end((err, res) => {
+              expect(res).to.have.property('statusCode').eql(500)
+              expect(res.text).eql('Product cannot be updated!')
+              expect(res.body).to.be.an('object')
+              done()
+            })
+        })
+      })
+    })
+  })
+
   
   /**
    * DELETE REQUESTS
@@ -208,21 +324,21 @@ describe('Product Routes', () => {
           .delete(`/products/${product.id}`)
           .set({ Authorization: `Bearer ${token}` })
           .end((err, res) => {
-            expect(res).to.have.property('statusCode', 200)
+            expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.have.property('message', 'Product deleted successfully!')
             expect(res.body).to.be.an('object')
             done()
           })
       })
     })
-    it('should throw an error when given false id', done => {
+    it('should throw an error when given false id', (done) => {
       const fakeId = '600ed7ea059fa61ba4711212'
       chai
         .request(server)
         .delete(`/products/${fakeId}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode', 404)
+          expect(res).to.have.property('statusCode').eql(404)
           expect(res.body).to.have.property('message').eql('Product could not be deleted!')
           expect(res.body).to.have.property('success').eql(false)
           expect(res.body).to.be.an('object')

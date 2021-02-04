@@ -94,7 +94,7 @@ describe('Category Routes', () => {
         .request(server)
         .post('/users/login')
         .send({
-          email: 'test@test.com',
+          email: 'testadmin@test.com',
           password: '123456',
         })
         .end((err, res) => {
@@ -103,7 +103,7 @@ describe('Category Routes', () => {
           done()
         })
     })
-    it('should POST a category', (done) => {
+    it('should CREATE a category', (done) => {
       const category = {
         name: 'Test',
         icon: 'test-icon',
@@ -149,7 +149,7 @@ describe('Category Routes', () => {
           .request(server)
           .post('/users/login')
           .send({
-            email: 'test@test.com',
+            email: 'testadmin@test.com',
             password: '123456',
           })
           .end((err, res) => {
@@ -224,7 +224,7 @@ describe('Category Routes', () => {
         .request(server)
         .post('/users/login')
         .send({
-          email: 'test@test.com',
+          email: 'testadmin@test.com',
           password: '123456',
         })
         .end((err, res) => {
