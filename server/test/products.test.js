@@ -11,6 +11,7 @@ const chai = require('chai')
 const { expect } = chai
 const chaiHttp = require('chai-http')
 const mongoose = require('mongoose')
+const fs = require('fs')
 
 const { Product } = require('../models/product')
 const { Category } = require('../models/category')
@@ -126,7 +127,7 @@ describe('Product Routes', () => {
    * /POST REQUESTS
    */
   describe('/POST products', () => {
-    it('should POST a product', (done) => {
+    it('should POST a product with a single image upload', (done) => {
       let category = new Category({
         name: 'category',
         icon: 'category-icon',
@@ -134,38 +135,42 @@ describe('Product Routes', () => {
       })
       category.save((err, category) => {
         if (err) throw err 
-        const product = {
-          name: 'post-test',
-          description: 'test',
-          mainDescription: 'test',
-          image: '',
-          brand: 'test',
-          price: 23,
-          category: `${category._id}`,
-          stockCount: 25,
-          rating: 5,
-          numReviews: 4,
-          isFeatured: true
-        }
         chai
           .request(server)
           .post('/products')
           .set({ Authorization: `Bearer ${token}` })
-          .send(product)
+          .set('content-type', 'multipart/form-data')
+          .field('name', 'post-test')
+          .field('description', 'test')
+          .field('mainDescription', 'test')
+          .field('image', 'Profile')
+          .field('brand', 'test')
+          .field('price', 23)
+          .field('category', `${category._id}`)
+          .field('stockCount', 23)
+          .field('rating', 5)
+          .field('numReviews', 4)
+          .field('isFeatured', true)
+          .attach(
+            'image', 
+            fs.readFileSync(`${__dirname}/test-images/Profile.jpg`), 
+            'tests/test-images/Profile.jpg'
+          )
           .end((err, res) => {
-            console.log(res)
-            expect(res).to.have.property('statusCode', 200)
+            console.log(err)
+            expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.be.an('object')
-            expect(res.body).to.have.property('name').eql(product.name)
-            expect(res.body).to.have.property('description').eql(product.description)
-            expect(res.body).to.have.property('mainDescription').eql(product.mainDescription)
-            expect(res.body).to.have.property('brand').eql(product.brand)
-            expect(res.body).to.have.property('price').eql(product.price)
-            expect(res.body).to.have.property('category').eql(product.category)
-            expect(res.body).to.have.property('stockCount').eql(product.stockCount)
-            expect(res.body).to.have.property('rating').eql(product.rating)
-            expect(res.body).to.have.property('numReviews').eql(product.numReviews)
-            expect(res.body).to.have.property('isFeatured').eql(product.isFeatured)
+            expect(res.body).to.have.property('name').eql('post-test')
+            expect(res.body).to.have.property('description').eql('test')
+            expect(res.body).to.have.property('mainDescription').eql('test')
+            expect(res.body).to.have.property('image')
+            expect(res.body).to.have.property('brand').eql('test')
+            expect(res.body).to.have.property('price').eql(23)
+            expect(res.body).to.have.property('category').eql(`${category._id}`)
+            expect(res.body).to.have.property('stockCount').eql(23)
+            expect(res.body).to.have.property('rating').eql(5)
+            expect(res.body).to.have.property('numReviews').eql(4)
+            expect(res.body).to.have.property('isFeatured').eql(true)
             done()
           })
       })
