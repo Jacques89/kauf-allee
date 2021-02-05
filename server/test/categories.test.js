@@ -11,9 +11,9 @@ const { expect } = chai
 
 const chaiHttp = require('chai-http')
 const mongoose = require('mongoose')
-const app = require('../../app')
+const app = require('../app')
 
-const { Category } = require('../../models/category')
+const { Category } = require('../models/category')
 
 chai.use(chaiHttp)
 require('dotenv').config()
@@ -117,6 +117,10 @@ describe('Category Routes', () => {
         .end((err, res) => {
           expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('object')
+          expect(res.body).to.have.property('name').eql(category.name)
+          expect(res.body).to.have.property('icon').eql(category.icon)
+          expect(res.body).to.have.property('color').eql(category.color)
+          expect(res.body).to.have.property('_id')
           done()
         })
     })
@@ -179,7 +183,7 @@ describe('Category Routes', () => {
           .end((err, res) => {
             expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.be.an('object')
-            expect(res.body).to.have.property('name').eql('updated-test')
+            expect(res.body).to.have.property('name').eql(updatedCategory.name)
             done()
           })
       })
