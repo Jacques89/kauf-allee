@@ -157,7 +157,6 @@ describe('Product Routes', () => {
             'tests/test-images/Profile.jpg'
           )
           .end((err, res) => {
-            console.log(err)
             expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.be.an('object')
             expect(res.body).to.have.property('name').eql('post-test')
