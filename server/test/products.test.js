@@ -153,6 +153,7 @@ describe('Product Routes', () => {
           .set({ Authorization: `Bearer ${token}` })
           .send(product)
           .end((err, res) => {
+            console.log(res)
             expect(res).to.have.property('statusCode', 200)
             expect(res.body).to.be.an('object')
             expect(res.body).to.have.property('name').eql(product.name)
