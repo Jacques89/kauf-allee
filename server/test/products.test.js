@@ -154,7 +154,7 @@ describe('Product Routes', () => {
           .attach(
             'image', 
             fs.readFileSync(`${__dirname}/test-images/Profile.jpg`), 
-            'tests/test-images/Profile.jpg'
+            'test/test-images/Profile.jpg'
           )
           .end((err, res) => {
             expect(res).to.have.property('statusCode').eql(200)
@@ -253,6 +253,77 @@ describe('Product Routes', () => {
               expect(res.body).to.have.property('brand').eql(updatedProduct.brand)
               expect(res.body).to.have.property('price').eql(updatedProduct.price)
             })
+        })
+      })
+    })
+    describe('/PUT /products/gallery/:id', () => {
+      it('should UPDATE a product with multiple image upload', (done) => {
+        let category = new Category({
+          name: 'category',
+          icon: 'category-icon',
+          color: '#fffff',
+        })
+        category.save((err, category) => {
+          let product = new Product({
+            name: 'test',
+            description: 'test',
+            mainDescription: 'test',
+            image: '',
+            brand: 'test',
+            price: 23,
+            category: `${category._id}`,
+            stockCount: 36,
+            rating: 5,
+            numReviews: 4,
+            isFeatured: true,
+            images: []
+          })
+          product.save((err, product) => {
+            chai
+              .request(server)
+              .put(`/products/gallery/${product._id}`)
+              .set({ Authorization: `Bearer ${token}` })
+              .set('content-type', 'multipart/form-data')
+              .field('name', 'test')
+              .field('description', 'test')
+              .field('mainDescription', 'test')
+              .field('image', 'Profile')
+              .field('images', 'Profile', 'Group_38')
+              .field('brand', 'test')
+              .field('price', 23)
+              .field('category', `${category._id}`)
+              .field('stockCount', 36)
+              .field('rating', 5)
+              .field('numReviews', 4)
+              .field('isFeatured', true)
+              .attach(
+                'images', 
+                fs.readFileSync(`${__dirname}/test-images/Profile.jpg`), 
+                'test/test-images/Profile.jpg'
+              )
+              .attach(
+                'images', 
+                fs.readFileSync(`${__dirname}/test-images/Profile.jpg`), 
+                'test/test-images/Group_38.jpg'
+              )
+              .end((err, res) => {
+                expect(res).to.have.property('statusCode').eql(200)
+                expect(res.body).to.be.an('object')
+                expect(res.body).to.have.property('name').eql('test')
+                expect(res.body).to.have.property('description').eql('test')
+                expect(res.body).to.have.property('mainDescription').eql('test')
+                expect(res.body).to.have.property('image')
+                expect(res.body).to.have.property('brand').eql('test')
+                expect(res.body).to.have.property('price').eql(23)
+                expect(res.body).to.have.property('category').eql(`${category._id}`)
+                expect(res.body).to.have.property('stockCount').eql(36)
+                expect(res.body).to.have.property('rating').eql(5)
+                expect(res.body).to.have.property('numReviews').eql(4)
+                expect(res.body).to.have.property('isFeatured').eql(true)
+                expect(res.body).to.have.property('images')
+                done()
+              })
+          })
         })
       })
     })
