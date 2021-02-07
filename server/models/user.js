@@ -1,3 +1,19 @@
+/**
+ * user.js
+ * @fileoverview The user model schema
+ * @param {String} name The name of the user
+ * @param {String} email The email of the user
+ * @param {String} passwordHash The hashed password of the user
+ * @param {String} phone The phone number of the user
+ * @param {Boolean} isAdmin Determines if the user is an admin
+ * @param {String} street The street of the user
+ * @param {String} apartment The apartment of the user
+ * @param {String} postcode The postcode of the user
+ * @param {String} city The city of the user
+ * @param {String} country The country of the user
+ */
+
+
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 

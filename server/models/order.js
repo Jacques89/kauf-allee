@@ -1,3 +1,19 @@
+/**
+ * order.js
+ * @fileoverview The order model schema
+ * @param {ObjectId} orderItems The orderItems containing the products in an order
+ * @param {String} shippingAddress1 The primary shipping address of the order
+ * @param {String} shippingAddress2 The secondary shipping address of the order
+ * @param {String} city The city destination of the order 
+ * @param {String} postcode The postcode of the shipping address 
+ * @param {String} country The country destination of the shipping address
+ * @param {String} phone The phone number of the order to contact the user
+ * @param {String} status The current shipping status of the order
+ * @param {Number} totalPrice The total price of the order
+ * @param {ObjectId} user The user id of the user who made the order
+ * @param {Date} dateOrdered The date that the order was made 
+ */
+
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
