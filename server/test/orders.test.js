@@ -182,7 +182,7 @@ describe('Order Routes', () => {
    * /POST TESTS
    */
   describe('/POST orders', () =>{
-    it('should POST an order', (done) => {
+    it('should CREATE an order', (done) => {
       let order = new Order({
         orderItems: [],
         shippingAddress1: "Deutscheweg 28",
@@ -327,6 +327,7 @@ describe('Order Routes', () => {
           .delete(`/orders/${order.id}`)
           .set({ Authorization: `Bearer ${token}` })
           .end((err, res) => {
+            expect(res.body).to.be.an('object')
             expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.have.property('success').eql(true)
             expect(res.body).to.have.property('message').eql('Order deleted successfully!')
@@ -341,10 +342,10 @@ describe('Order Routes', () => {
         .delete(`/orders/${fakeId}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(404)
-          expect(res.body).to.have.property('message').eql('Order could not be deleted!')
-          expect(res.body).to.have.property('success').eql(false)
           expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(404)
+          expect(res.body).to.have.property('success').eql(false)
+          expect(res.body).to.have.property('message').eql('Order could not be deleted!')
           done()
         })
     })

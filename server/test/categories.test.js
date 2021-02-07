@@ -41,8 +41,8 @@ describe('Category Routes', () => {
         .request(server)
         .get('/categories')
         .end((err, res) => {
-          expect(res).to.have.property('statusCode', 200)
           expect(res.body).to.be.an('array')
+          expect(res).to.have.property('statusCode', 200)
           expect(res.body.length).to.be.eql(0)
           done()
         })
@@ -115,8 +115,8 @@ describe('Category Routes', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send(category)
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.have.property('name').eql(category.name)
           expect(res.body).to.have.property('icon').eql(category.icon)
           expect(res.body).to.have.property('color').eql(category.color)
@@ -136,8 +136,8 @@ describe('Category Routes', () => {
         .set({ Authorization: `Bearer ${token}` })
         .send(falseCategory)
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(500)
           expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(500)
           expect(res.body).to.have.property('message').eql('Category cannot be created!')
         })
     })
@@ -181,8 +181,8 @@ describe('Category Routes', () => {
           .set({ Authorization: `Bearer ${token}` })
           .send(updatedCategory)
           .end((err, res) => {
-            expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.have.property('name').eql(updatedCategory.name)
             done()
           })
@@ -208,8 +208,8 @@ describe('Category Routes', () => {
           .set({ Authorization: `Bearer ${token}` })
           .send(fakeUpdatedCategory)
           .end((err, res) => {
-            expect(res).to.have.property('statusCode').eql(404)
             expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode').eql(404)
             expect(res.text).eql('Category cannot be updated!')
             done()
           })
@@ -250,10 +250,10 @@ describe('Category Routes', () => {
         .delete(`/categories/${category._id}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
+          expect(res.body).to.be.an('object')
           expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.have.property('message').eql('Category deleted successfully!')
           expect(res.body).to.have.property('success').eql(true)
-          expect(res.body).to.be.an('object')
           done()
         })
       })

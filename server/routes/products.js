@@ -16,8 +16,8 @@ const {
   getFeaturedProductCount,
   createProduct,
   updateProduct,
-  deleteProduct,
-  updateProductImage
+  updateProductImage,
+  deleteProduct
 } = require('../controllers/products')
 
 // Multer config for image uploads

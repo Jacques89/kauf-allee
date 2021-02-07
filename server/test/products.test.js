@@ -127,7 +127,7 @@ describe('Product Routes', () => {
    * /POST REQUESTS
    */
   describe('/POST products', () => {
-    it('should POST a product with a single image upload', (done) => {
+    it('should CREATE a product with a single image upload', (done) => {
       let category = new Category({
         name: 'category',
         icon: 'category-icon',

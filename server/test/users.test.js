@@ -54,8 +54,8 @@ describe('User Routes', () => {
         .get('/users')
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('array')
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body.length).to.be.eql(1)
           done()
         })
@@ -63,7 +63,7 @@ describe('User Routes', () => {
   })
 
   describe('/GET /users/:id', () => {
-    it('should get a user given the id', (done) => {
+    it('should GET a user given the id', (done) => {
       let user = new User({
         name: 'test-user',
         email: 'testuser@test.com',
@@ -83,8 +83,8 @@ describe('User Routes', () => {
           .get(`/users/${user._id}`)
           .set({ Authorization: `Bearer ${token}` })
           .end((err, res) => {
-            expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.be.an('object')
+            expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.have.property('name').eql(user.name)
             expect(res.body).to.have.property('email').eql(user.email)
             expect(res.body).to.have.property('phone').eql(user.phone)
@@ -106,8 +106,8 @@ describe('User Routes', () => {
         .get(`/users/${fakeUserId}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(500)
           expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(500)
           expect(res.body).to.have.property('message').eql('The user ID was not found.')
           done()
         })
@@ -115,14 +115,14 @@ describe('User Routes', () => {
   })
 
   describe('/GET /users/get/count', () => {
-    it('should get a count of users', (done) => {
+    it('should GET a count of users', (done) => {
       chai
         .request(server)
         .get('/users/get/count')
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.have.property('userCount').eql(1)
           done()
         })
@@ -152,8 +152,8 @@ describe('User Routes', () => {
         .send(user)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.have.property('name').eql(user.name)
           expect(res.body).to.have.property('email').eql(user.email)
           expect(res.body).to.have.property('phone').eql(user.phone)
@@ -179,8 +179,8 @@ describe('User Routes', () => {
         .post('/users/login')
         .send(userLogin)
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.have.property('user').eql(`${userLogin.email}`)
           expect(res.body).to.have.property('token')
           done()
@@ -207,8 +207,8 @@ describe('User Routes', () => {
         .post('/users/register')
         .send(userSignUp)
         .end((err, res) => {
-          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.be.an('object')
+          expect(res).to.have.property('statusCode').eql(200)
           expect(res.body).to.have.property('name').eql(userSignUp.name)
           expect(res.body).to.have.property('email'),eql(userSignUp.email)
           expect(res.body).to.have.property('password').eql(userSignUp.passwordHash)
@@ -227,7 +227,7 @@ describe('User Routes', () => {
    * DELETE TESTS
    */
   describe('/DELETE /users/:id', () => {
-    it('should delete a user', (done) => {
+    it('should DELETE a user', (done) => {
       let user = new User({
         name: 'test-user',
         email: 'testuser@test.com',
@@ -246,6 +246,7 @@ describe('User Routes', () => {
           .delete(`/users/${user._id}`)
           .set({ Authorization: `Bearer ${token}` })
           .end((err, res) => {
+            expect(res.body).to.be.an('object')
             expect(res).to.have.property('statusCode').eql(200)
             expect(res.body).to.have.property('success').eql(true)
             expect(res.body).to.have.property('message').eql('User deleted successfully!')
@@ -260,6 +261,7 @@ describe('User Routes', () => {
         .delete(`/users/${fakeUserId}`)
         .set({ Authorization: `Bearer ${token}` })
         .end((err, res) => {
+          expect(res.body).to.be.an('object')
           expect(res).to.have.property('statusCode').eql(404)
           expect(res.body).to.have.property('success').eql(false)
           expect(res.body).to.have.property('message').eql('User could not be deleted!')
