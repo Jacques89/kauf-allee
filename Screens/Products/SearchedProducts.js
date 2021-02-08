@@ -1,11 +1,13 @@
-import React from "react"
-import { View, StyleSheet } from "react-native"
-import { Content, Left, Body, ListItem, Thumbnail, Text } from "native-base"
+import React from 'react'
+import { View, StyleSheet, Dimensions } from 'react-native'
+import { Content, Left, Body, ListItem, Thumbnail, Text } from 'native-base'
+
+const { width } = Dimensions.get('window')
 
 const SearchedProducts = (props) => {
   const { filteredProducts } = props
   return (
-    <Content>
+    <Content style={{ width: width }}>
       {filteredProducts.length > 0
         ? filteredProducts.map((item) => (
             <ListItem
