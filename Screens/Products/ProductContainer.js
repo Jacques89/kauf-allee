@@ -17,6 +17,7 @@ import {
 
 import ProductList from './ProductList'
 import SearchedProduct from './SearchedProducts'
+import Banner from '../../Components/Banner'
 
 import data from '../../assets/data/products.json'
 
@@ -69,7 +70,9 @@ const ProductContainer = () => {
         <SearchedProduct filteredProducts={filteredProducts} />
       ) : (
         <View style={styles.container}>
-          <NBText>Product Container</NBText>
+          <View>
+            <Banner />
+          </View>
           <View style={styles.listContainer}>
             <FlatList
               numColumns={2}
