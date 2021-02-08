@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, Dimensions } from 'react-native'
+import { View, StyleSheet, ActivityIndicator, FlatList, Dimensions } from 'react-native'
 import { 
-  Container, 
+  Container,
+  Text as NBText,
   Header as NBHeader, 
   Icon as NBIcon, 
   Item as NBItem, 
@@ -17,9 +18,11 @@ const { height } = Dimensions.get('window')
 const ProductContainer = () => {
 
   const [products, setProducts] = useState([])
+  const [filteredProducts, setFilteredProducts] = useState([])
 
   useEffect(() => {
     setProducts(data)
+    setFilteredProducts(data)
     return () => {
       setProducts([])
     }
@@ -38,7 +41,7 @@ const ProductContainer = () => {
         </NBItem>
       </NBHeader>
       <View style={styles.container}>
-        <Text>Product Container</Text>
+        <NBText>Product Container</NBText>
         <View style={styles.listContainer}>
           <FlatList
             numColumns={2}
