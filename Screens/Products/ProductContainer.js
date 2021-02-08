@@ -22,7 +22,7 @@ import data from '../../assets/data/products.json'
 
 const { height } = Dimensions.get('window')
 
-const ProductContainer = (prps) => {
+const ProductContainer = () => {
   const [products, setProducts] = useState([])
   const [filteredProducts, setFilteredProducts] = useState([])
   const [focus, setFocus] = useState()
