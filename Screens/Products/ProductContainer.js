@@ -4,13 +4,10 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  ActivityIndicator,
-  FlatList,
   Dimensions,
 } from 'react-native'
 import {
   Container,
-  Text as NBText,
   Header as NBHeader,
   Icon as NBIcon,
   Item as NBItem,
@@ -120,7 +117,7 @@ const ProductContainer = () => {
                 })}
               </View>
             ) : (
-              <View style={(styles.center, { height: '40%' })}>
+              <View style={[styles.center, { height: height / 2 }]}>
                 <Text>No Products Found!</Text>
               </View>
             )}
@@ -137,7 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'gainsboro',
   },
   listContainer: {
-    width: '100%',
+    height: height,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-start',
