@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import {
   View,
+  Text,
   StyleSheet,
+  ScrollView,
   ActivityIndicator,
   FlatList,
   Dimensions,
@@ -30,7 +32,7 @@ const ProductContainer = () => {
   const [filteredProducts, setFilteredProducts] = useState([])
   const [focus, setFocus] = useState()
   const [categories, setCategories] = useState([])
-  const [productCtg, setProductCtg] = useState([])
+  const [productsCtg, setProductsCtg] = useState([])
   const [active, setActive] = useState()
   const [initialState, setInitialState] = useState([])
 
@@ -39,6 +41,7 @@ const ProductContainer = () => {
     setFilteredProducts(data)
     setFocus(false)
     setCategories(productsCategories)
+    setProductsCtg(data)
     setActive(-1)
     setInitialState(data)
 
@@ -70,13 +73,13 @@ const ProductContainer = () => {
   const changeCtg = (ctg) => {
     {
       ctg === 'all'
-        ? [setProductCtg(initialState), setActive(true)]
+        ? [setProductsCtg(initialState), setActive(true)]
         : [
-          setProductCtg(
-            products.filter((i) => i.category._id === ctg),
-            setActive(true)
-          ),
-        ]
+            setProductsCtg(
+              products.filter((i) => i.category.$oid === ctg),
+              setActive(true)
+            ),
+          ]
     }
   }
 
@@ -96,30 +99,33 @@ const ProductContainer = () => {
       {focus === true ? (
         <SearchedProduct filteredProducts={filteredProducts} />
       ) : (
-        <View>
+        <ScrollView>
           <View>
-            <Banner />
             <View>
-              <CategoryFilter 
+              <Banner />
+            </View>
+            <View>
+              <CategoryFilter
                 categories={categories}
                 categoryFilter={changeCtg}
-                productsCategories={productCtg}
+                productsCtg={productsCtg}
                 active={active}
                 setActive={setActive}
               />
             </View>
+            {productsCtg.length > 0 ? (
+              <View style={styles.listContainer}>
+                {productsCtg.map((item) => {
+                  return <ProductList key={item._id.$oid} item={item} />
+                })}
+              </View>
+            ) : (
+              <View style={(styles.center, { height: '40%' })}>
+                <Text>No Products Found!</Text>
+              </View>
+            )}
           </View>
-          <View style={styles.listContainer}>
-            <FlatList
-              numColumns={2}
-              data={products}
-              renderItem={({ item }) => (
-                <ProductList key={item.id} item={item} />
-              )}
-              keyExtractor={(item) => item.id}
-            />
-          </View>
-        </View>
+        </ScrollView>
       )}
     </Container>
   )
