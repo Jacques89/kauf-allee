@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-} from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native'
 import {
   Container,
   Header as NBHeader,
@@ -24,7 +18,7 @@ import productsCategories from '../../assets/data/categories.json'
 
 const { height } = Dimensions.get('window')
 
-const ProductContainer = () => {
+const ProductContainer = (props) => {
   const [products, setProducts] = useState([])
   const [filteredProducts, setFilteredProducts] = useState([])
   const [focus, setFocus] = useState()
@@ -94,7 +88,10 @@ const ProductContainer = () => {
         </NBItem>
       </NBHeader>
       {focus === true ? (
-        <SearchedProduct filteredProducts={filteredProducts} />
+        <SearchedProduct
+          navigation={props.navigation}
+          filteredProducts={filteredProducts}
+        />
       ) : (
         <ScrollView>
           <View>
@@ -113,7 +110,13 @@ const ProductContainer = () => {
             {productsCtg.length > 0 ? (
               <View style={styles.listContainer}>
                 {productsCtg.map((item) => {
-                  return <ProductList key={item._id.$oid} item={item} />
+                  return (
+                    <ProductList
+                      navigation={props.navigation}
+                      key={item._id.$oid}
+                      item={item}
+                    />
+                  )
                 })}
               </View>
             ) : (
