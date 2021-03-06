@@ -62,7 +62,7 @@ const Cart = (props) => {
               <Text style={styles.price}>€ {total}</Text>
             </Left>
             <Right>
-              <Button title="Clear" />
+              <Button title="Clear" onPress={() => props.clearCart()} />
             </Right>
             <Right>
               <Button
@@ -86,6 +86,12 @@ const mapStateToProps = (state) => {
   const { cartItems } = state
   return {
     cartItems: cartItems,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    clearCart: () => dispatch(actions.clearCart()),
   }
 }
 
@@ -120,4 +126,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default connect(mapStateToProps, null)(Cart)
+export default connect(mapStateToProps, mapDispatchToProps)(Cart)
