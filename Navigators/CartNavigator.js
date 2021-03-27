@@ -6,7 +6,7 @@ import Checkout from '../Screens/Cart/Checkout'
 
 const Stack = createStackNavigator()
 
-function CartStack()  {
+const CartStack = () => {
   return(
     <Stack.Navigator>
       <Stack.Screen 
